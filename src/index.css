@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Theme tokens.
+  - All colors are HSL triplets (no `hsl()` wrapper) so Tailwind can apply
+    opacity modifiers, matching shadcn/ui's convention — any of your 44
+    pasted-in components will read these same variable names out of the box.
+  - Light mode is intentionally vibrant (saturated indigo primary, warm
+    amber accent) rather than the flat gray shadcn default, per request.
+  - Dark mode stays a calmer, desaturated version of the same hues so the
+    product still feels like one brand across both modes.
+*/
+
+@layer base {
+    :root {
+        --background: 240 25% 98%;
+        --foreground: 240 10% 12%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 12%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 12%;
+
+        --primary: 243 75% 59%;
+        /* vibrant indigo */
+        --primary-foreground: 0 0% 100%;
+
+        --secondary: 174 72% 40%;
+        /* vibrant teal */
+        --secondary-foreground: 0 0% 100%;
+
+        --accent: 32 95% 55%;
+        /* vibrant amber */
+        --accent-foreground: 20 40% 15%;
+
+        --muted: 240 15% 94%;
+        --muted-foreground: 240 8% 42%;
+
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 100%;
+
+        --border: 240 15% 88%;
+        --input: 240 15% 88%;
+        --ring: 243 75% 59%;
+
+        /* Status colors — referenced by StatusBadge, task cards, dashboards */
+        --status-locked: 240 8% 65%;
+        --status-available: 217 91% 60%;
+        --status-progress: 32 95% 55%;
+        --status-completed: 152 65% 40%;
+        --status-skipped: 0 0% 55%;
+
+        --radius: 0.65rem;
+    }
+
+    .dark {
+        --background: 240 15% 8%;
+        --foreground: 240 10% 92%;
+
+        --card: 240 14% 11%;
+        --card-foreground: 240 10% 92%;
+
+        --popover: 240 14% 11%;
+        --popover-foreground: 240 10% 92%;
+
+        --primary: 243 80% 68%;
+        --primary-foreground: 240 15% 8%;
+
+        --secondary: 174 55% 45%;
+        --secondary-foreground: 240 15% 8%;
+
+        --accent: 32 80% 58%;
+        --accent-foreground: 240 15% 8%;
+
+        --muted: 240 10% 16%;
+        --muted-foreground: 240 8% 64%;
+
+        --destructive: 0 70% 55%;
+        --destructive-foreground: 0 0% 100%;
+
+        --border: 240 10% 20%;
+        --input: 240 10% 20%;
+        --ring: 243 80% 68%;
+
+        --status-locked: 240 6% 42%;
+        --status-available: 217 85% 65%;
+        --status-progress: 32 80% 58%;
+        --status-completed: 152 55% 48%;
+        --status-skipped: 0 0% 45%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: "cv11", "ss01";
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+/* Avoid a flash of the wrong theme before React hydrates — see the
+   blocking inline script in index.html's <head> that sets this class. */
+html {
+    color-scheme: light dark;
+}
