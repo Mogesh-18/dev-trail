@@ -2,9 +2,11 @@ import { assignmentsProvider } from "@/data-providers/supabase/assignments.provi
 
 export const AssignmentRepository = {
     list: () => assignmentsProvider.list(),
+    listPage: (params) => assignmentsProvider.listPage(params),
     getById: (id) => assignmentsProvider.getById(id),
     create: (input) => assignmentsProvider.create(input),
     update: (id, input) => assignmentsProvider.update(id, input),
+    updateStatus: (id, status) => assignmentsProvider.updateStatus(id, status),
     remove: (id) => assignmentsProvider.remove(id),
     listTaskLinks: () => assignmentsProvider.listTaskLinks(),
     setTaskLinks: (assignmentId, taskIds) => assignmentsProvider.setTaskLinks(assignmentId, taskIds),

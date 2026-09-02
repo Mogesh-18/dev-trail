@@ -2,6 +2,18 @@ import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth.store";
 
+async function fetchWithRetry(input, init, retries = 1) {
+    try {
+        return await fetch(input, init);
+    } catch (err) {
+        if (retries > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+            return fetchWithRetry(input, init, retries - 1);
+        }
+        throw err;
+    }
+}
+
 export function AuthProvider({ children }) {
     const setSession = useAuthStore((s) => s.setSession);
     const setRole = useAuthStore((s) => s.setRole);
@@ -21,7 +33,7 @@ export function AuthProvider({ children }) {
                 setStatus("loading");
             }
             try {
-                const res = await fetch("/api/auth-allowlist-check", {
+                const res = await fetchWithRetry("/api/auth-allowlist-check", {
                     method: "POST",
                     headers: { Authorization: `Bearer ${session.access_token}` },
                 });

@@ -10,14 +10,20 @@ const PRIORITY_STYLES = {
     high: "bg-destructive/15 text-destructive",
 };
 
+const PRIORITY_DOT = {
+    low: "bg-muted-foreground/50",
+    medium: "bg-status-progress",
+    high: "bg-destructive",
+};
+
 export function TaskListItem({ task, index, total, prerequisiteCount, onMoveUp, onMoveDown, onEdit, onDelete }) {
     return (
         <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
             <div className="flex flex-col">
-                <Button variant="ghost" size="icon" className="h-6 w-6" disabled={index === 0} onClick={() => onMoveUp(task)} aria-label="Move up">
+                <Button variant="ghost" size="icon" className="h-8 w-8" disabled={index === 0} onClick={() => onMoveUp(task)} aria-label="Move up">
                     <ChevronUp className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6" disabled={index === total - 1} onClick={() => onMoveDown(task)} aria-label="Move down">
+                <Button variant="ghost" size="icon" className="h-8 w-8" disabled={index === total - 1} onClick={() => onMoveDown(task)} aria-label="Move down">
                     <ChevronDown className="h-4 w-4" />
                 </Button>
             </div>
@@ -32,16 +38,26 @@ export function TaskListItem({ task, index, total, prerequisiteCount, onMoveUp, 
             </Link>
 
             {prerequisiteCount > 0 && (
-                <span className="hidden text-xs text-muted-foreground sm:inline">
+                <span className="hidden shrink-0 text-xs text-muted-foreground sm:inline">
                     {prerequisiteCount} prereq{prerequisiteCount > 1 ? "s" : ""}
                 </span>
             )}
 
-            <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-medium capitalize", PRIORITY_STYLES[task.priority])}>
+            <span
+                aria-hidden
+                title={task.priority}
+                className={cn("h-2 w-2 shrink-0 rounded-full sm:hidden", PRIORITY_DOT[task.priority])}
+            />
+            <span
+                className={cn(
+                    "hidden shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium capitalize sm:inline-block",
+                    PRIORITY_STYLES[task.priority]
+                )}
+            >
                 {task.priority}
             </span>
 
-            <div className="flex items-center gap-1">
+            <div className="flex shrink-0 items-center gap-1">
                 <Button variant="ghost" size="icon" onClick={() => onEdit(task)} aria-label="Edit task">
                     <Pencil className="h-4 w-4" />
                 </Button>

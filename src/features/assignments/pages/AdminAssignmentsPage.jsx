@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { LoadMoreButton } from "@/components/common/LoadMoreButton";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { AssignmentFormDialog } from "@/features/assignments/components/AssignmentFormDialog";
 import {
-    useAssignments,
+    useAssignmentsPaginated,
     useAssignmentTaskLinks,
     useCreateAssignment,
     useDeleteAssignment,
@@ -17,7 +18,7 @@ import { useTasks } from "@/features/tasks/hooks/useTasks";
 import { ROUTES } from "@/constants/routes";
 
 export default function AdminAssignmentsPage() {
-    const { data: assignments, isLoading } = useAssignments();
+    const { items: assignments, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useAssignmentsPaginated(10);
     const { data: taskLinks = [] } = useAssignmentTaskLinks();
     const { data: allTasks = [] } = useTasks();
     const createAssignment = useCreateAssignment();
@@ -25,8 +26,6 @@ export default function AdminAssignmentsPage() {
 
     const [formOpen, setFormOpen] = useState(false);
     const [deletingAssignment, setDeletingAssignment] = useState(null);
-
-    const list = assignments ?? [];
 
     function handleSubmit(values) {
         createAssignment.mutateAsync(values).then(() => setFormOpen(false));
@@ -58,7 +57,7 @@ export default function AdminAssignmentsPage() {
                 </div>
             )}
 
-            {!isLoading && list.length === 0 && (
+            {!isLoading && assignments.length === 0 && (
                 <EmptyState
                     icon={ClipboardList}
                     title="No assignments yet"
@@ -68,9 +67,9 @@ export default function AdminAssignmentsPage() {
                 />
             )}
 
-            {!isLoading && list.length > 0 && (
+            {!isLoading && assignments.length > 0 && (
                 <div className="space-y-2">
-                    {list.map((assignment) => (
+                    {assignments.map((assignment) => (
                         <div key={assignment.id} className="flex items-center gap-3 rounded-lg border bg-card p-3">
                             <Link to={ROUTES.ADMIN_ASSIGNMENT_DETAILS(assignment.id)} className="min-w-0 flex-1 hover:underline">
                                 <p className="truncate font-medium">{assignment.title}</p>
@@ -85,6 +84,7 @@ export default function AdminAssignmentsPage() {
                             </Button>
                         </div>
                     ))}
+                    <LoadMoreButton onClick={fetchNextPage} isLoading={isFetchingNextPage} hasMore={!!hasNextPage} />
                 </div>
             )}
 

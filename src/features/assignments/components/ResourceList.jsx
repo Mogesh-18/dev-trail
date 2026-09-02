@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { AssignmentService } from "@/features/assignments/services/assignment.service";
 import { useRemoveResource } from "@/features/assignments/hooks/useAssignments";
 
-export function ResourceList({ assignmentId, resources }) {
+export function ResourceList({ assignmentId, resources, canManage = true }) {
     const removeResource = useRemoveResource(assignmentId);
     const [openingId, setOpeningId] = useState(null);
 
@@ -45,14 +45,16 @@ export function ResourceList({ assignmentId, resources }) {
                     >
                         <Download className="h-4 w-4" />
                     </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeResource.mutate(resource)}
-                        aria-label="Remove resource"
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {canManage && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeResource.mutate(resource)}
+                            aria-label="Remove resource"
+                        >
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    )}
                 </li>
             ))}
         </ul>

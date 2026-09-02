@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListChecks, ClipboardList, TrendingUp, Users, UserCircle } from "lucide-react";
+import { LayoutDashboard, ListChecks, ClipboardList, TrendingUp, StickyNote, Users, UserCircle } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 
 export const ADMIN_NAV_ITEMS = [
@@ -6,6 +6,7 @@ export const ADMIN_NAV_ITEMS = [
     { label: "Tasks", to: ROUTES.ADMIN_TASKS, icon: ListChecks },
     { label: "Assignments", to: ROUTES.ADMIN_ASSIGNMENTS, icon: ClipboardList },
     { label: "Progress", to: ROUTES.ADMIN_PROGRESS, icon: TrendingUp },
+    { label: "Notes", to: ROUTES.ADMIN_NOTES, icon: StickyNote },
     { label: "Users", to: ROUTES.ADMIN_USERS, icon: Users },
 ];
 

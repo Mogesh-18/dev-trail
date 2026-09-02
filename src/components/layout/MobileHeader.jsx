@@ -7,7 +7,7 @@ export function MobileHeader() {
     const { signOut } = useAuth();
 
     return (
-        <header className="flex items-center justify-between border-b px-4 py-3 md:hidden">
+        <header className="flex items-center justify-between border-b px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] md:hidden">
             <span className="text-base font-semibold">DevTrail</span>
             <div className="flex items-center gap-1">
                 <ThemeToggle />

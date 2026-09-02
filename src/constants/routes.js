@@ -9,6 +9,7 @@ export const ROUTES = {
     ADMIN_ASSIGNMENT_DETAILS: (assignmentId) => `/admin/assignments/${assignmentId}`,
     ADMIN_PROGRESS: "/admin/progress",
     ADMIN_USERS: "/admin/users",
+    ADMIN_NOTES: "/admin/notes",
 
     STUDENT_DASHBOARD: "/student/dashboard",
     STUDENT_TASKS: "/student/tasks",

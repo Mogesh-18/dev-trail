@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { TaskService } from "@/features/tasks/services/task.service";
+import { TaskRepository } from "@/repositories/task.repository";
 
 const TASKS_KEY = ["tasks"];
 const DEPENDENCIES_KEY = ["task-dependencies"];
@@ -47,5 +48,13 @@ export function useReorderTasks() {
     return useMutation({
         mutationFn: (orderedIds) => TaskService.reorder(orderedIds),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: TASKS_KEY }),
+    });
+}
+
+export function useTask(id) {
+    return useQuery({
+        queryKey: ["task", id],
+        queryFn: () => TaskRepository.getById(id),
+        enabled: !!id,
     });
 }

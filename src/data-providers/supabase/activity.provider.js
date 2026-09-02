@@ -34,4 +34,19 @@ export const activityProvider = {
         });
         if (error) throw error;
     },
+
+    async listPage({ cursor, pageSize = 10 }) {
+        let query = supabase
+            .from("activity")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(pageSize);
+        if (cursor) query = query.lt("created_at", cursor);
+
+        const { data, error } = await query;
+        if (error) throw error;
+        const items = data.map(mapActivityRow);
+        const nextCursor = items.length === pageSize ? items[items.length - 1].createdAt : null;
+        return { items, nextCursor };
+    },
 };

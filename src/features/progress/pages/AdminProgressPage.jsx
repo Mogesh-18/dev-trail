@@ -18,7 +18,7 @@ export default function AdminProgressPage() {
     const { data: tasks, isLoading: tasksLoading } = useTasks();
     const { data: assignments, isLoading: assignmentsLoading } = useAssignments();
     const { data: progress, isLoading: progressLoading } = useProgress();
-    const { data: activity, isLoading: activityLoading } = useActivity();
+    const { data: activity, isLoading: activityLoading } = useActivity(50);
 
     const isLoading = tasksLoading || assignmentsLoading || progressLoading || activityLoading;
 
@@ -69,7 +69,7 @@ export default function AdminProgressPage() {
 
             <section className="space-y-3 rounded-lg border p-4">
                 <h2 className="font-medium">Recent activity</h2>
-                <ActivityTimeline activity={activity} tasksById={tasksById} assignmentsById={assignmentsById} />
+                <ActivityTimeline tasksById={tasksById} assignmentsById={assignmentsById} />
             </section>
         </div>
     );

@@ -6,6 +6,7 @@ import AdminTaskDetailsPage from "@/features/tasks/pages/AdminTaskDetailsPage";
 import AdminAssignmentsPage from "@/features/assignments/pages/AdminAssignmentsPage";
 import AdminAssignmentDetailsPage from "@/features/assignments/pages/AdminAssignmentDetailsPage";
 import AdminProgressPage from "@/features/progress/pages/AdminProgressPage";
+import AdminNotesPage from "@/features/notes/pages/AdminNotesPage";
 import UsersPage from "@/features/users/pages/UsersPage";
 
 export const adminDashboardRoute = createRoute({
@@ -42,6 +43,12 @@ export const adminProgressRoute = createRoute({
     getParentRoute: () => adminLayoutRoute,
     path: "progress",
     component: AdminProgressPage,
+});
+
+export const adminNotesRoute = createRoute({
+    getParentRoute: () => adminLayoutRoute,
+    path: "notes",
+    component: AdminNotesPage,
 });
 
 export const adminUsersRoute = createRoute({

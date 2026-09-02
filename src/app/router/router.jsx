@@ -11,6 +11,7 @@ import {
     adminAssignmentsRoute,
     adminAssignmentDetailsRoute,
     adminProgressRoute,
+    adminNotesRoute,
     adminUsersRoute,
 } from "@/app/router/routes/admin/admin.routes";
 import { studentLayoutRoute } from "@/app/router/routes/student/student.layout";
@@ -23,6 +24,7 @@ import {
     studentAccountRoute,
 } from "@/app/router/routes/student/student.routes";
 import NotFoundPage from "@/components/common/NotFoundPage";
+import RouteErrorPage from "@/components/common/RouteErrorPage";
 
 const routeTree = rootRoute.addChildren([
     indexRoute,
@@ -35,6 +37,7 @@ const routeTree = rootRoute.addChildren([
         adminAssignmentsRoute,
         adminAssignmentDetailsRoute,
         adminProgressRoute,
+        adminNotesRoute,
         adminUsersRoute,
     ]),
     studentLayoutRoute.addChildren([
@@ -51,4 +54,5 @@ export const router = createRouter({
     routeTree,
     context: { auth: undefined },
     defaultNotFoundComponent: NotFoundPage,
+    defaultErrorComponent: RouteErrorPage,
 });

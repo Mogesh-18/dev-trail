@@ -13,10 +13,12 @@ import {
     useAssignmentTaskLinks,
     useAssignmentResources,
     useUpdateAssignment,
+    useUpdateAssignmentStatus,
     useDeleteAssignment,
 } from "@/features/assignments/hooks/useAssignments";
 import { useTasks } from "@/features/tasks/hooks/useTasks";
 import { ROUTES } from "@/constants/routes";
+import { ASSIGNMENT_STATUS } from "@/constants/statuses";
 
 export default function AdminAssignmentDetailsPage() {
     const { assignmentId } = useParams({ strict: false });
@@ -27,6 +29,7 @@ export default function AdminAssignmentDetailsPage() {
     const { data: allTasks = [] } = useTasks();
     const { data: resources = [] } = useAssignmentResources(assignmentId);
     const updateAssignment = useUpdateAssignment();
+    const updateStatus = useUpdateAssignmentStatus();
     const deleteAssignment = useDeleteAssignment();
 
     const [editOpen, setEditOpen] = useState(false);
@@ -48,6 +51,9 @@ export default function AdminAssignmentDetailsPage() {
     const linkedTasks = allTasks.filter((t) =>
         taskLinks.some((l) => l.assignmentId === assignment.id && l.taskId === t.id)
     );
+
+    const needsReview =
+        assignment.status === ASSIGNMENT_STATUS.SUBMITTED || assignment.status === ASSIGNMENT_STATUS.UNDER_REVIEW;
 
     function handleUpdate(values) {
         updateAssignment.mutateAsync({ id: assignment.id, input: values }).then(() => setEditOpen(false));
@@ -80,6 +86,25 @@ export default function AdminAssignmentDetailsPage() {
                     </Button>
                 </div>
             </div>
+
+            {needsReview && (
+                <section className="flex items-center gap-2 rounded-lg border p-4">
+                    <span className="mr-auto text-sm text-muted-foreground">Waiting on your review.</span>
+                    <Button
+                        variant="outline"
+                        onClick={() => updateStatus.mutate({ id: assignment.id, status: ASSIGNMENT_STATUS.CHANGES_REQUESTED })}
+                        disabled={updateStatus.isPending}
+                    >
+                        Request changes
+                    </Button>
+                    <Button
+                        onClick={() => updateStatus.mutate({ id: assignment.id, status: ASSIGNMENT_STATUS.COMPLETED })}
+                        disabled={updateStatus.isPending}
+                    >
+                        Mark complete
+                    </Button>
+                </section>
+            )}
 
             {assignment.instructions && (
                 <section className="space-y-1">

@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCursorPagination } from "@/hooks/use-cursor-pagination";
 import { AssignmentService } from "@/features/assignments/services/assignment.service";
 
 const ASSIGNMENTS_KEY = ["assignments"];
@@ -6,6 +7,15 @@ const TASK_LINKS_KEY = ["assignment-task-links"];
 
 export function useAssignments() {
     return useQuery({ queryKey: ASSIGNMENTS_KEY, queryFn: AssignmentService.list });
+}
+
+export function useAssignmentsPaginated(pageSize = 10) {
+    // Prefix-matches ASSIGNMENTS_KEY, so every mutation below that invalidates
+    // ["assignments"] refreshes this list too — no extra invalidation needed.
+    return useCursorPagination({
+        queryKey: [...ASSIGNMENTS_KEY, "infinite"],
+        fetchPage: (cursor) => AssignmentService.listPage({ cursor, pageSize }),
+    });
 }
 
 export function useAssignment(id) {
@@ -38,6 +48,17 @@ export function useUpdateAssignment() {
         onSuccess: (_data, { id }) => {
             queryClient.invalidateQueries({ queryKey: ASSIGNMENTS_KEY });
             queryClient.invalidateQueries({ queryKey: TASK_LINKS_KEY });
+            queryClient.invalidateQueries({ queryKey: ["assignment", id] });
+        },
+    });
+}
+
+export function useUpdateAssignmentStatus() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, status }) => AssignmentService.updateStatus(id, status),
+        onSuccess: (_data, { id }) => {
+            queryClient.invalidateQueries({ queryKey: ASSIGNMENTS_KEY });
             queryClient.invalidateQueries({ queryKey: ["assignment", id] });
         },
     });

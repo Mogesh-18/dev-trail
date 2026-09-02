@@ -146,4 +146,30 @@ export const assignmentsProvider = {
             await supabase.storage.from("assignment-resources").remove([resource.url]);
         }
     },
+
+    async updateStatus(id, status) {
+        const { data, error } = await supabase
+            .from("assignments")
+            .update({ status, updated_at: new Date().toISOString() })
+            .eq("id", id)
+            .select()
+            .single();
+        if (error) throw error;
+        return mapAssignmentRow(data);
+    },
+
+    async listPage({ cursor, pageSize = 10 }) {
+        let query = supabase
+            .from("assignments")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(pageSize);
+        if (cursor) query = query.lt("created_at", cursor);
+
+        const { data, error } = await query;
+        if (error) throw error;
+        const items = data.map(mapAssignmentRow);
+        const nextCursor = items.length === pageSize ? items[items.length - 1].createdAt : null;
+        return { items, nextCursor };
+    },
 };

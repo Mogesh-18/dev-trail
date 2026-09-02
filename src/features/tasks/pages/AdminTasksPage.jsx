@@ -3,9 +3,12 @@ import { Plus, ListTodo } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { LoadMoreButton } from "@/components/common/LoadMoreButton";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { TaskFormDialog } from "@/features/tasks/components/TaskFormDialog";
 import { TaskListItem } from "@/features/tasks/components/TaskListItem";
+import { useRenderWindow } from "@/hooks/use-render-window";
 import {
     useTasks,
     useTaskDependencies,
@@ -15,8 +18,10 @@ import {
     useReorderTasks,
 } from "@/features/tasks/hooks/useTasks";
 
+const PAGE_SIZE = 10;
+
 export default function AdminTasksPage() {
-    const { data: tasks, isLoading } = useTasks();
+    const { data: tasks, isLoading, isError, refetch } = useTasks();
     const { data: dependencies = [] } = useTaskDependencies();
     const createTask = useCreateTask();
     const updateTask = useUpdateTask();
@@ -28,6 +33,7 @@ export default function AdminTasksPage() {
     const [deletingTask, setDeletingTask] = useState(null);
 
     const orderedTasks = tasks ?? [];
+    const { visibleItems, hasMore, loadMore } = useRenderWindow(orderedTasks, PAGE_SIZE);
 
     function handleCreate() {
         setEditingTask(null);
@@ -88,7 +94,11 @@ export default function AdminTasksPage() {
                 </div>
             )}
 
-            {!isLoading && orderedTasks.length === 0 && (
+            {isError && (
+                <ErrorState description="Couldn't load tasks. Check your connection and try again." onRetry={refetch} />
+            )}
+
+            {!isLoading && !isError && orderedTasks.length === 0 && (
                 <EmptyState
                     icon={ListTodo}
                     title="No tasks yet"
@@ -98,21 +108,25 @@ export default function AdminTasksPage() {
                 />
             )}
 
-            {!isLoading && orderedTasks.length > 0 && (
+            {!isLoading && !isError && orderedTasks.length > 0 && (
                 <div className="space-y-2">
-                    {orderedTasks.map((task, index) => (
-                        <TaskListItem
-                            key={task.id}
-                            task={task}
-                            index={index}
-                            total={orderedTasks.length}
-                            prerequisiteCount={dependencies.filter((d) => d.taskId === task.id).length}
-                            onMoveUp={handleMoveUp}
-                            onMoveDown={handleMoveDown}
-                            onEdit={handleEdit}
-                            onDelete={setDeletingTask}
-                        />
-                    ))}
+                    {visibleItems.map((task) => {
+                        const index = orderedTasks.findIndex((t) => t.id === task.id);
+                        return (
+                            <TaskListItem
+                                key={task.id}
+                                task={task}
+                                index={index}
+                                total={orderedTasks.length}
+                                prerequisiteCount={dependencies.filter((d) => d.taskId === task.id).length}
+                                onMoveUp={handleMoveUp}
+                                onMoveDown={handleMoveDown}
+                                onEdit={handleEdit}
+                                onDelete={setDeletingTask}
+                            />
+                        );
+                    })}
+                    <LoadMoreButton onClick={loadMore} hasMore={hasMore} />
                 </div>
             )}
 

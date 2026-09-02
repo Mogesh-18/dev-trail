@@ -3,6 +3,7 @@ import { emit, EVENTS } from "@/app/events/bus";
 
 export const AssignmentService = {
     list: () => AssignmentRepository.list(),
+    listPage: (params) => AssignmentRepository.listPage(params),
     getById: (id) => AssignmentRepository.getById(id),
     listTaskLinks: () => AssignmentRepository.listTaskLinks(),
     listResources: (assignmentId) => AssignmentRepository.listResources(assignmentId),
@@ -21,6 +22,13 @@ export const AssignmentService = {
         const assignment = await AssignmentRepository.update(id, input);
         await AssignmentRepository.setTaskLinks(id, input.taskIds ?? []);
         emit(EVENTS.ASSIGNMENT_UPDATED, { assignmentId: id });
+        return assignment;
+    },
+
+    async updateStatus(id, status) {
+        const assignment = await AssignmentRepository.updateStatus(id, status);
+        if (status === "submitted") emit(EVENTS.ASSIGNMENT_SUBMITTED, { assignmentId: id });
+        if (status === "completed") emit(EVENTS.ASSIGNMENT_COMPLETED, { assignmentId: id });
         return assignment;
     },
 
