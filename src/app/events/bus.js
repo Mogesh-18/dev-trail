@@ -1,5 +1,16 @@
+
+/**
+ * Internal event target used as the global event bus.
+ * 
+ * @type {EventTarget}
+ */
 const target = new EventTarget();
 
+/**
+ * Event names used across the application for the event bus.
+ * 
+ * @enum {string}
+ */
 export const EVENTS = {
     TASK_CREATED: "TASK_CREATED",
     TASK_UPDATED: "TASK_UPDATED",
@@ -19,12 +30,23 @@ export const EVENTS = {
     AUTH_LOGOUT: "AUTH_LOGOUT",
 };
 
-/** Emit an event with an optional detail payload. */
+/**
+ * Emit a global event with an optional detail payload.
+ * 
+ * @param {string} type - Event name (one of `EVENTS`).
+ * @param {any} [detail] - Data to pass to event listeners.
+ */
 export function emit(type, detail) {
     target.dispatchEvent(new CustomEvent(type, { detail }));
 }
 
-/** Subscribe to an event. Returns an unsubscribe function — call it in a useEffect cleanup. */
+/**
+ * Subscribe to a global event. Returns an unsubscribe function.
+ * 
+ * @param {string} type - Event name (one of `EVENTS`).
+ * @param {(detail: any) => void} handler - Callback receiving the event payload.
+ * @returns {() => void} Unsubscribe function – call in `useEffect` cleanup.
+ */
 export function on(type, handler) {
     const listener = (event) => handler(event.detail);
     target.addEventListener(type, listener);

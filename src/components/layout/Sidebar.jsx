@@ -4,6 +4,13 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
+/**
+ * A fixed sidebar for desktop devices with navigation links, user email, theme toggle, and sign‑out.
+ * 
+ * @param {Object} props
+ * @param {Array<{ label: string, to: string, icon: React.ComponentType }>} props.navItems - Navigation items.
+ * @returns {JSX.Element}
+ */
 export function Sidebar({ navItems }) {
     const { user, signOut } = useAuth();
 

@@ -12,13 +12,16 @@ import { calculateOverallProgress, calculateStreak, summarizeCounts } from "@/fe
 import { TASK_STATUS } from "@/constants/statuses";
 import { ROUTES } from "@/constants/routes";
 
+/**
+ * Student dashboard showing overall progress, current/next tasks, stats, and recent activity.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function StudentDashboardPage() {
     const { data: tasks, isLoading: tasksLoading } = useTasks();
     const { data: dependencies = [] } = useTaskDependencies();
     const { data: assignments } = useAssignments();
     const { data: progress, isLoading: progressLoading } = useProgress();
-    // 50, not the widget's own display page size — streak/velocity need
-    // enough history to scan correctly regardless of what's rendered below.
     const { data: activity, isLoading: activityLoading } = useActivity(50);
 
     const tasksById = useMemo(() => Object.fromEntries((tasks ?? []).map((t) => [t.id, t])), [tasks]);

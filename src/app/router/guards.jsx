@@ -3,8 +3,11 @@ import { ROLES } from "@/constants/roles";
 import { ROUTES } from "@/constants/routes";
 
 /**
- * The single place role-gating logic lives — layout routes call this in
- * beforeLoad rather than each page re-checking auth.status/role itself.
+ * Returns a `beforeLoad` guard that enforces a specific role.
+ * On failure, redirects to `/unauthorized`, `/login`, or the correct dashboard.
+ * 
+ * @param {string} role - Required role (e.g. `ROLES.ADMIN`).
+ * @returns {Function} A `beforeLoad` function for TanStack Router.
  */
 export function requireRole(role) {
     return function beforeLoad({ context }) {

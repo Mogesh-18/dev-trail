@@ -10,16 +10,17 @@ import { useProgress, useActivity } from "@/features/progress/hooks/useProgress"
 import { useAllNotesPaginated } from "@/features/notes/hooks/useNotes";
 import { deriveTaskStatuses } from "@/features/tasks/services/task-availability.service";
 import {
-    calculateOverallProgress,
-    calculateAssignmentCompletionRate,
-    calculateStreak,
-    calculateVelocity,
-    summarizeCounts,
+    calculateOverallProgress, calculateAssignmentCompletionRate, calculateStreak, calculateVelocity, summarizeCounts,
 } from "@/features/progress/services/insights.service";
 import { TASK_STATUS, ASSIGNMENT_STATUS } from "@/constants/statuses";
 import { ROUTES } from "@/constants/routes";
 import { formatRelativeTime } from "@/utils/format-date";
 
+/**
+ * Admin dashboard showing overall progress, current/next tasks, stats, recent activity, and recent notes.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function AdminDashboardPage() {
     const { data: tasks, isLoading: tasksLoading } = useTasks();
     const { data: dependencies = [] } = useTaskDependencies();

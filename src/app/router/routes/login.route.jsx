@@ -4,6 +4,11 @@ import LoginPage from "@/features/auth/pages/LoginPage";
 import { ROLES } from "@/constants/roles";
 import { ROUTES } from "@/constants/routes";
 
+/**
+ * Login route (`/login`). If already authenticated, redirects to dashboard.
+ * 
+ * @type {Route}
+ */
 export const loginRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/login",

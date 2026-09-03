@@ -11,6 +11,11 @@ import { deriveTaskStatus } from "@/features/tasks/services/task-availability.se
 import { TASK_STATUS } from "@/constants/statuses";
 import { ROUTES } from "@/constants/routes";
 
+/**
+ * Student view for a single task, showing status, related assignments, and actions (start, complete, reopen).
+ * 
+ * @returns {JSX.Element}
+ */
 export default function StudentTaskDetailsPage() {
     const { taskId } = useParams({ strict: false });
     const { data: tasks, isLoading: tasksLoading } = useTasks();

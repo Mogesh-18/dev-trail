@@ -1,5 +1,13 @@
 import { Link } from "@tanstack/react-router";
 
+/**
+ * A fixed bottom navigation bar visible only on mobile devices.
+ * Each item links to a route and displays an icon and label.
+ * 
+ * @param {Object} props
+ * @param {Array<{ label: string, to: string, icon: React.ComponentType }>} props.navItems - Navigation items.
+ * @returns {JSX.Element}
+ */
 export function BottomNav({ navItems }) {
     return (
         <nav

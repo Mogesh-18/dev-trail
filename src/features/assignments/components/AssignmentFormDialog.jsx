@@ -10,6 +10,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
+/**
+ * Default form values for the assignment creation/editing form.
+ * 
+ * @type {{
+ *   title: string,
+ *   instructions: string,
+ *   requirements: string,
+ *   acceptanceCriteria: string,
+ *   deadline: string,
+ *   estimatedMinutes: string,
+ *   taskIds: string[]
+ * }}
+ */
 const DEFAULT_VALUES = {
     title: "",
     instructions: "",
@@ -20,6 +33,19 @@ const DEFAULT_VALUES = {
     taskIds: [],
 };
 
+/**
+ * Responsive dialog (desktop: dialog, mobile: sheet) for creating/editing an assignment.
+ * 
+ * @param {Object} props
+ * @param {boolean} props.open - Controls dialog visibility.
+ * @param {(open: boolean) => void} props.onOpenChange - Callback for open state changes.
+ * @param {Object|null} props.assignment - Existing assignment (null for create).
+ * @param {Array} props.allTasks - List of all tasks available for linking.
+ * @param {Array} props.taskLinks - Existing assignment–task link relationships.
+ * @param {(values: Object) => void} props.onSubmit - Submit handler.
+ * @param {boolean} props.isPending - Whether the submit action is in progress.
+ * @returns {JSX.Element}
+ */
 export function AssignmentFormDialog({ open, onOpenChange, assignment, allTasks, taskLinks, onSubmit, isPending }) {
     const {
         register,
@@ -35,9 +61,7 @@ export function AssignmentFormDialog({ open, onOpenChange, assignment, allTasks,
     useEffect(() => {
         if (!open) return;
         if (assignment) {
-            const taskIds = taskLinks
-                .filter((link) => link.assignmentId === assignment.id)
-                .map((link) => link.taskId);
+            const taskIds = taskLinks.filter((link) => link.assignmentId === assignment.id).map((link) => link.taskId);
             reset({
                 title: assignment.title,
                 instructions: assignment.instructions ?? "",

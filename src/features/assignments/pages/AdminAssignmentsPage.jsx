@@ -9,14 +9,16 @@ import { LoadMoreButton } from "@/components/common/LoadMoreButton";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { AssignmentFormDialog } from "@/features/assignments/components/AssignmentFormDialog";
 import {
-    useAssignmentsPaginated,
-    useAssignmentTaskLinks,
-    useCreateAssignment,
-    useDeleteAssignment,
+    useAssignmentsPaginated, useAssignmentTaskLinks, useCreateAssignment, useDeleteAssignment,
 } from "@/features/assignments/hooks/useAssignments";
 import { useTasks } from "@/features/tasks/hooks/useTasks";
 import { ROUTES } from "@/constants/routes";
 
+/**
+ * Admin list view for all assignments with creation, deletion, and pagination.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function AdminAssignmentsPage() {
     const { items: assignments, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useAssignmentsPaginated(10);
     const { data: taskLinks = [] } = useAssignmentTaskLinks();
@@ -33,7 +35,9 @@ export default function AdminAssignmentsPage() {
 
     function handleConfirmDelete() {
         if (!deletingAssignment) return;
-        deleteAssignment.mutate(deletingAssignment.id, { onSuccess: () => setDeletingAssignment(null) });
+        deleteAssignment.mutate(deletingAssignment.id, { 
+            onSuccess: () => setDeletingAssignment(null) 
+        });
     }
 
     return (

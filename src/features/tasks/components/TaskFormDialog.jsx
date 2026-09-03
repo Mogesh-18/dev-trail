@@ -11,6 +11,20 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
+/**
+ * Default form values for the task creation/editing form.
+ * 
+ * @type {{
+ *   title: string,
+ *   description: string,
+ *   instructions: string,
+ *   priority: 'low'|'medium'|'high',
+ *   estimatedMinutes: string,
+ *   dueDate: string,
+ *   completionCriteria: string,
+ *   prerequisiteTaskIds: string[]
+ * }}
+ */
 const DEFAULT_VALUES = {
     title: "",
     description: "",
@@ -22,6 +36,19 @@ const DEFAULT_VALUES = {
     prerequisiteTaskIds: [],
 };
 
+/**
+ * Responsive dialog (desktop: dialog, mobile: sheet) for creating/editing a task.
+ * 
+ * @param {Object} props
+ * @param {boolean} props.open - Controls dialog visibility.
+ * @param {(open: boolean) => void} props.onOpenChange - Callback for open state changes.
+ * @param {Object|null} props.task - Existing task (null for create).
+ * @param {Array} props.otherTasks - List of tasks that can be selected as prerequisites (excluding the current one).
+ * @param {Array} props.dependencies - Existing dependency relationships.
+ * @param {(values: Object) => void} props.onSubmit - Submit handler.
+ * @param {boolean} props.isPending - Whether the submit action is in progress.
+ * @returns {JSX.Element}
+ */
 export function TaskFormDialog({ open, onOpenChange, task, otherTasks, dependencies, onSubmit, isPending }) {
     const {
         register,

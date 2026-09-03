@@ -3,6 +3,13 @@ import { rootRoute } from "@/app/router/routes/root.route";
 import { ROLES } from "@/constants/roles";
 import { ROUTES } from "@/constants/routes";
 
+/**
+ * Root index route (`/`) — redirects based on auth status.
+ * If authenticated, goes to dashboard of the user's role.
+ * If unauthorized or unauthenticated, redirects to `/unauthorized` or `/login`.
+ * 
+ * @type {Route}
+ */
 export const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/",
@@ -14,8 +21,12 @@ export const indexRoute = createRoute({
             });
         }
         if (auth.status === "unauthorized") {
-            throw redirect({ to: ROUTES.UNAUTHORIZED });
+            throw redirect({ 
+                to: ROUTES.UNAUTHORIZED 
+            });
         }
-        throw redirect({ to: ROUTES.LOGIN });
+        throw redirect({ 
+            to: ROUTES.LOGIN 
+        });
     },
 });

@@ -1,18 +1,14 @@
 import { TASK_STATUS } from "@/constants/statuses";
 
 /**
- * The single source of truth for whether a task is locked, available, in
- * progress, completed, or skipped for a given student. Locked/available are
- * always derived here — never stored — so they can't drift when
- * dependencies change. In-progress/completed/skipped come from a stored
- * Progress row (added in Milestone 6); this function is written now so
- * Milestones 6 and 7 both consume the exact same rule, but it has no caller
- * yet in this milestone — the admin task list doesn't need per-student
- * status.
- *
- * @param {{id: string}} task
- * @param {{taskId: string, prerequisiteTaskId: string}[]} dependencies - all dependency rows
- * @param {Record<string, {status: string}>} progressByTaskId - this student's progress, keyed by taskId
+ * Determines the actual status of a single task for a given student.
+ * Uses stored progress (if any) for in-progress/completed/skipped; otherwise
+ * computes locked/available based on prerequisite completion.
+ * 
+ * @param {Object} task - Task object (must have `id`).
+ * @param {Array<{ taskId: string, prerequisiteTaskId: string }>} dependencies - All dependency rows.
+ * @param {Record<string, { status: string }>} progressByTaskId - Progress records keyed by task ID.
+ * @returns {string} One of TASK_STATUS constants.
  */
 export function deriveTaskStatus(task, dependencies, progressByTaskId = {}) {
     const own = progressByTaskId[task.id];
@@ -28,7 +24,14 @@ export function deriveTaskStatus(task, dependencies, progressByTaskId = {}) {
     return allPrerequisitesMet ? TASK_STATUS.AVAILABLE : TASK_STATUS.LOCKED;
 }
 
-/** Convenience for a whole task list at once — used by both admin and student task views. */
+/**
+ * Convenience function to derive statuses for an entire task list at once.
+ * 
+ * @param {Array} tasks - List of task objects.
+ * @param {Array} dependencies - All dependency rows.
+ * @param {Record<string, { status: string }>} progressByTaskId - Progress records keyed by task ID.
+ * @returns {Record<string, string>} Map of task ID → derived status.
+ */
 export function deriveTaskStatuses(tasks, dependencies, progressByTaskId = {}) {
     return Object.fromEntries(
         tasks.map((task) => [task.id, deriveTaskStatus(task, dependencies, progressByTaskId)])

@@ -1,3 +1,13 @@
+
+/**
+ * A simple card for displaying a statistic (label, value, optional hint).
+ * 
+ * @param {Object} props
+ * @param {string} props.label - Statistic label.
+ * @param {string | number} props.value - Statistic value.
+ * @param {string} [props.hint] - Additional context (e.g., change percentage).
+ * @returns {JSX.Element}
+ */
 export function StatCard({ label, value, hint }) {
     return (
         <div className="rounded-lg border bg-card p-4">

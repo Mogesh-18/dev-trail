@@ -3,9 +3,24 @@ import { useQueryClient } from "@tanstack/react-query";
 import { on, EVENTS } from "@/app/events/bus";
 import { ActivityService } from "@/features/progress/services/activity.service";
 
+/**
+ * Maps task/assignment lifecycle events to activity log entries.
+ * Each mapping function receives the event detail and returns an object
+ * with `type`, `entityType`, and `entityId` for `ActivityService.log()`.
+ * 
+ * @type {Record<string, (detail: any) => { type: string, entityType: string, entityId: string | number }>}
+ */
 const ACTIVITY_LOG_MAP = {
-    [EVENTS.TASK_STARTED]: (detail) => ({ type: EVENTS.TASK_STARTED, entityType: "task", entityId: detail.taskId }),
-    [EVENTS.TASK_COMPLETED]: (detail) => ({ type: EVENTS.TASK_COMPLETED, entityType: "task", entityId: detail.taskId }),
+    [EVENTS.TASK_STARTED]: (detail) => ({ 
+        type: EVENTS.TASK_STARTED, 
+        entityType: "task", 
+        entityId: detail.taskId 
+    }),
+    [EVENTS.TASK_COMPLETED]: (detail) => ({ 
+        type: EVENTS.TASK_COMPLETED, 
+        entityType: "task", 
+        entityId: detail.taskId 
+    }),
     [EVENTS.ASSIGNMENT_SUBMITTED]: (detail) => ({
         type: EVENTS.ASSIGNMENT_SUBMITTED,
         entityType: "assignment",
@@ -18,10 +33,14 @@ const ACTIVITY_LOG_MAP = {
     }),
 };
 
-// The only place task/assignment lifecycle events turn into Activity rows.
-// TaskService and ProgressService only emit events — they don't know this
-// listener, or the Activity table, exist. This is the concrete example from
-// the architecture doc: Task completed -> Event Bus -> Activity creation.
+/**
+ * React provider that registers event listeners for task/assignment lifecycle
+ * events and automatically logs them as activity rows via `ActivityService`.
+ * 
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Child components.
+ * @returns {React.ReactNode} The provider's children.
+ */
 export function EventListenersProvider({ children }) {
     const queryClient = useQueryClient();
 

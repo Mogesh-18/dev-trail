@@ -10,6 +10,11 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatCard } from "@/components/common/StatCard";
 
+/**
+ * Student account page displaying profile, display name form, and learning stats.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function AccountPage() {
     const { user } = useAuth();
     const { data: profile, isLoading } = useProfile(user?.id);

@@ -7,6 +7,11 @@ import { LoadMoreButton } from "@/components/common/LoadMoreButton";
 import { useAssignmentsPaginated } from "@/features/assignments/hooks/useAssignments";
 import { ROUTES } from "@/constants/routes";
 
+/**
+ * Student list view for assignments with status badges and pagination.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function StudentAssignmentsPage() {
     const { items: assignments, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useAssignmentsPaginated(10);
 

@@ -6,6 +6,14 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { ROLES } from "@/constants/roles";
 import { ADMIN_NAV_ITEMS, STUDENT_NAV_ITEMS } from "@/constants/navigation";
 
+/**
+ * The main application shell containing the sidebar, mobile header, bottom navigation,
+ * and an outlet for route content. The navigation items are determined by the user's role.
+ * 
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - (Not used directly; rendered via `<Outlet />`)
+ * @returns {JSX.Element}
+ */
 export function AppShell() {
     const { role } = useAuth();
     const navItems = role === ROLES.ADMIN ? ADMIN_NAV_ITEMS : STUDENT_NAV_ITEMS;

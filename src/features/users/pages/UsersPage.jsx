@@ -6,6 +6,11 @@ import { formatRelativeTime } from "@/utils/format-date";
 import { TASK_STATUS } from "@/constants/statuses";
 import { ROLES } from "@/constants/roles";
 
+/**
+ * Admin page showing all user profiles with avatar, role, last login, and (for students) completion count.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function UsersPage() {
     const { data: profiles, isLoading } = useProfiles();
     const { data: tasks } = useTasks();

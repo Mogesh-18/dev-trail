@@ -7,6 +7,15 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useNotes, useAddNote, useDeleteNote } from "@/features/notes/hooks/useNotes";
 import { formatRelativeTime } from "@/utils/format-date";
 
+/**
+ * Renders a note-taking section for a given context (task or assignment).
+ * Shows existing notes, allows adding and deleting (author only), and supports pagination.
+ * 
+ * @param {Object} props
+ * @param {string} props.contextType - e.g., "task" or "assignment".
+ * @param {string|number} props.contextId - ID of the entity.
+ * @returns {JSX.Element}
+ */
 export function NotesSection({ contextType, contextId }) {
     const { user } = useAuth();
     const { items: notes, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useNotes(contextType, contextId);
@@ -17,7 +26,9 @@ export function NotesSection({ contextType, contextId }) {
     function handleSubmit(e) {
         e.preventDefault();
         if (!body.trim()) return;
-        addNote.mutate(body.trim(), { onSuccess: () => setBody("") });
+        addNote.mutate(body.trim(), { 
+            onSuccess: () => setBody("") 
+        });
     }
 
     return (

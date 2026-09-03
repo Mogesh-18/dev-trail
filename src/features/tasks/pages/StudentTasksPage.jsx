@@ -10,8 +10,16 @@ import { useProgress } from "@/features/progress/hooks/useProgress";
 import { groupTasksByTab } from "@/features/tasks/utils/group-tasks-by-tab";
 import { useRenderWindow } from "@/hooks/use-render-window";
 
+/**
+ * Page size
+ */
 const PAGE_SIZE = 10;
 
+/**
+ * Student task list grouped into tabs: In Progress, Completed, Upcoming.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function StudentTasksPage() {
     const { data: tasks, isLoading: tasksLoading, isError: tasksError, refetch: refetchTasks } = useTasks();
     const { data: dependencies = [] } = useTaskDependencies();
@@ -19,9 +27,6 @@ export default function StudentTasksPage() {
 
     const { inProgress, completed, upcoming } = groupTasksByTab(tasks ?? [], dependencies, progress);
 
-    // Called unconditionally, before the loading/error returns below — Rules
-    // of Hooks — so these run on empty arrays until data loads, which is
-    // harmless since useRenderWindow just windows whatever it's given.
     const inProgressWindow = useRenderWindow(inProgress, PAGE_SIZE);
     const completedWindow = useRenderWindow(completed, PAGE_SIZE);
     const upcomingWindow = useRenderWindow(upcoming, PAGE_SIZE);

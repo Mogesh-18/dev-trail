@@ -3,13 +3,17 @@ import { useParams, useNavigate } from "@tanstack/react-router";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StatusBadge } from "@/components/common/StatusBadge";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { TaskFormDialog } from "@/features/tasks/components/TaskFormDialog";
 import { NotesSection } from "@/features/notes/components/NotesSection";
 import { useTask, useTasks, useTaskDependencies, useUpdateTask, useDeleteTask } from "@/features/tasks/hooks/useTasks";
 import { ROUTES } from "@/constants/routes";
 
+/**
+ * Admin view for a single task, displaying details, prerequisites, notes, and edit/delete actions.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function AdminTaskDetailsPage() {
     const { taskId } = useParams({ strict: false });
     const navigate = useNavigate();

@@ -10,16 +10,19 @@ import { TaskFormDialog } from "@/features/tasks/components/TaskFormDialog";
 import { TaskListItem } from "@/features/tasks/components/TaskListItem";
 import { useRenderWindow } from "@/hooks/use-render-window";
 import {
-    useTasks,
-    useTaskDependencies,
-    useCreateTask,
-    useUpdateTask,
-    useDeleteTask,
-    useReorderTasks,
+    useTasks, useTaskDependencies, useCreateTask, useUpdateTask, useDeleteTask, useReorderTasks,
 } from "@/features/tasks/hooks/useTasks";
 
+/**
+ * Page size
+ */
 const PAGE_SIZE = 10;
 
+/**
+ * Admin list view for all tasks with create, edit, delete, reorder, and pagination.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function AdminTasksPage() {
     const { data: tasks, isLoading, isError, refetch } = useTasks();
     const { data: dependencies = [] } = useTaskDependencies();

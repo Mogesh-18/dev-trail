@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
+/**
+ * Login page with a "Sign in with Google" button.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function LoginPage() {
     const { signInWithGoogle } = useAuth();
 

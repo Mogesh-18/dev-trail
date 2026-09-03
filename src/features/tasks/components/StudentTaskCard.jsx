@@ -4,6 +4,14 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
+/**
+ * Card component for a student task in the task list. If locked, shows a lock icon and is not clickable.
+ * 
+ * @param {Object} props
+ * @param {Object} props.task - Task object with `derivedStatus`.
+ * @param {number} props.index - Task index (for numbering).
+ * @returns {JSX.Element}
+ */
 export function StudentTaskCard({ task, index }) {
     const locked = task.derivedStatus === "locked";
 

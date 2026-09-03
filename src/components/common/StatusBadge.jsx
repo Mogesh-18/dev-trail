@@ -13,6 +13,15 @@ const LABELS = {
     changes_requested: "Changes requested",
 };
 
+/**
+ * A badge that displays a status label with a colour derived from the status
+ * mapping (`TASK_STATUS_COLOR`). Supports task, assignment, and other statuses.
+ * 
+ * @param {Object} props
+ * @param {string} props.status - Status key (e.g., "in_progress").
+ * @param {string} [props.className] - Additional CSS classes.
+ * @returns {JSX.Element}
+ */
 export function StatusBadge({ status, className }) {
     const colorToken = TASK_STATUS_COLOR[status];
     return (

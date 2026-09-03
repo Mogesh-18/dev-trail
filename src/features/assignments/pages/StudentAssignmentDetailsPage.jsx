@@ -7,6 +7,11 @@ import { NotesSection } from "@/features/notes/components/NotesSection";
 import { useAssignment, useAssignmentResources, useUpdateAssignmentStatus } from "@/features/assignments/hooks/useAssignments";
 import { ASSIGNMENT_STATUS } from "@/constants/statuses";
 
+/**
+ * Student view for a single assignment, allowing status updates (start, submit, resubmit) and viewing resources/notes.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function StudentAssignmentDetailsPage() {
     const { assignmentId } = useParams({ strict: false });
     const { data: assignment, isLoading } = useAssignment(assignmentId);

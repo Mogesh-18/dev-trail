@@ -2,6 +2,11 @@ import { LoadMoreButton } from "@/components/common/LoadMoreButton";
 import { useActivityPaginated } from "@/features/progress/hooks/useProgress";
 import { formatRelativeTime } from "@/utils/format-date";
 
+/**
+ * Human‑readable labels for activity event types.
+ * 
+ * @type {Record<string, string>}
+ */
 const ACTIVITY_LABELS = {
     TASK_STARTED: "started",
     TASK_COMPLETED: "completed",
@@ -9,6 +14,16 @@ const ACTIVITY_LABELS = {
     ASSIGNMENT_COMPLETED: "completed",
 };
 
+/**
+ * Displays a timeline of recent activity events (task starts/completes, assignment submissions/completions).
+ * Uses `useActivityPaginated` and maps entity IDs to titles via provided lookup objects.
+ * 
+ * @param {Object} props
+ * @param {Record<string, Object>} props.tasksById - Task lookup map (id → task).
+ * @param {Record<string, Object>} props.assignmentsById - Assignment lookup map.
+ * @param {number} [props.pageSize=10] - Number of activities per page.
+ * @returns {JSX.Element}
+ */
 export function ActivityTimeline({ tasksById, assignmentsById, pageSize = 10 }) {
     const { items: activity, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useActivityPaginated(pageSize);
 

@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
+/**
+ * Unauthorized page shown when the user's email is not in the allowlist.
+ * Provides a "Try a different account" button to sign out.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function UnauthorizedPage() {
     const { signOut } = useAuth();
 

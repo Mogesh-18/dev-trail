@@ -1,3 +1,11 @@
+
+/**
+ * Formats a date string into a human‑readable relative time (e.g., "5m ago", "2d ago").
+ * Falls back to a locale‑sensitive date string for entries older than a week.
+ * 
+ * @param {string} dateString - An ISO‑8601 date string.
+ * @returns {string} The formatted relative time.
+ */
 export function formatRelativeTime(dateString) {
     const date = new Date(dateString);
     const diffMin = Math.round((Date.now() - date.getTime()) / 60000);

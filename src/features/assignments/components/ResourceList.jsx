@@ -4,6 +4,15 @@ import { Button } from "@/components/ui/button";
 import { AssignmentService } from "@/features/assignments/services/assignment.service";
 import { useRemoveResource } from "@/features/assignments/hooks/useAssignments";
 
+/**
+ * Displays a list of assignment resources with open/remove actions.
+ * 
+ * @param {Object} props
+ * @param {string|number} props.assignmentId - Assignment ID.
+ * @param {Array} props.resources - Resources to display.
+ * @param {boolean} [props.canManage=true] - Whether to show remove buttons.
+ * @returns {JSX.Element}
+ */
 export function ResourceList({ assignmentId, resources, canManage = true }) {
     const removeResource = useRemoveResource(assignmentId);
     const [openingId, setOpeningId] = useState(null);

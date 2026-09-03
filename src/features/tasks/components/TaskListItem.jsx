@@ -4,18 +4,42 @@ import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
+/**
+ * Tailwind CSS classes for priority badges (text and background).
+ * 
+ * @type {Record<'low'|'medium'|'high', string>}
+ */
 const PRIORITY_STYLES = {
     low: "bg-muted text-muted-foreground",
     medium: "bg-status-progress/15 text-status-progress",
     high: "bg-destructive/15 text-destructive",
 };
 
+/**
+ * Tailwind CSS classes for priority dots (small coloured circles).
+ * 
+ * @type {Record<'low'|'medium'|'high', string>}
+ */
 const PRIORITY_DOT = {
     low: "bg-muted-foreground/50",
     medium: "bg-status-progress",
     high: "bg-destructive",
 };
 
+/**
+ * Renders a single task row in the admin task list with reorder, edit, and delete actions.
+ * 
+ * @param {Object} props
+ * @param {Object} props.task - Task object.
+ * @param {number} props.index - Current index in the list (for ordering).
+ * @param {number} props.total - Total number of tasks.
+ * @param {number} props.prerequisiteCount - Number of prerequisites this task has.
+ * @param {(task: Object) => void} props.onMoveUp - Move task up handler.
+ * @param {(task: Object) => void} props.onMoveDown - Move task down handler.
+ * @param {(task: Object) => void} props.onEdit - Edit task handler.
+ * @param {(task: Object) => void} props.onDelete - Delete task handler.
+ * @returns {JSX.Element}
+ */
 export function TaskListItem({ task, index, total, prerequisiteCount, onMoveUp, onMoveDown, onEdit, onDelete }) {
     return (
         <div className="flex items-center gap-3 rounded-lg border bg-card p-3">

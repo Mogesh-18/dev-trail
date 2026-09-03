@@ -4,28 +4,26 @@ import { indexRoute } from "@/app/router/routes/index.route";
 import { loginRoute } from "@/app/router/routes/login.route";
 import { unauthorizedRoute } from "@/app/router/routes/unauthorized.route";
 import { adminLayoutRoute } from "@/app/router/routes/admin/admin.layout";
-import {
-    adminDashboardRoute,
-    adminTasksRoute,
-    adminTaskDetailsRoute,
-    adminAssignmentsRoute,
-    adminAssignmentDetailsRoute,
-    adminProgressRoute,
-    adminNotesRoute,
-    adminUsersRoute,
-} from "@/app/router/routes/admin/admin.routes";
 import { studentLayoutRoute } from "@/app/router/routes/student/student.layout";
+
 import {
-    studentDashboardRoute,
-    studentTasksRoute,
-    studentTaskDetailsRoute,
-    studentAssignmentsRoute,
-    studentAssignmentDetailsRoute,
+    adminDashboardRoute, adminTasksRoute, adminTaskDetailsRoute, adminAssignmentsRoute, adminAssignmentDetailsRoute, adminProgressRoute, 
+    adminNotesRoute, adminUsersRoute,
+} from "@/app/router/routes/admin/admin.routes";
+import {
+    studentDashboardRoute, studentTasksRoute, studentTaskDetailsRoute, studentAssignmentsRoute, studentAssignmentDetailsRoute,
     studentAccountRoute,
 } from "@/app/router/routes/student/student.routes";
+
 import NotFoundPage from "@/components/common/NotFoundPage";
 import RouteErrorPage from "@/components/common/RouteErrorPage";
 
+/**
+ * The complete route tree for the application, built from the root route
+ * and all child routes (public, admin, and student).
+ * 
+ * @type {import('@tanstack/react-router').RouteTree}
+ */
 const routeTree = rootRoute.addChildren([
     indexRoute,
     loginRoute,
@@ -50,9 +48,16 @@ const routeTree = rootRoute.addChildren([
     ]),
 ]);
 
+/**
+ * The application router instance with all routes, context, and fallback components.
+ * 
+ * @type {Router}
+ */
 export const router = createRouter({
     routeTree,
-    context: { auth: undefined },
+    context: { 
+        auth: undefined 
+    },
     defaultNotFoundComponent: NotFoundPage,
     defaultErrorComponent: RouteErrorPage,
 });

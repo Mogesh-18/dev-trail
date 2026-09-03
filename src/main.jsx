@@ -8,6 +8,13 @@ import { RouterRoot } from "@/app/router/RouterRoot";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import "./index.css";
 
+/**
+ * The application entry point.
+ * Wraps the entire app in error boundary, query client, theme, auth, and event listeners providers.
+ * Renders the `RouterRoot` component into the DOM element with id `"root"`.
+ * 
+ * @returns {void}
+ */
 createRoot(document.getElementById("root")).render(
     <StrictMode>
         <ErrorBoundary>

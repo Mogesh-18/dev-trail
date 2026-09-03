@@ -9,17 +9,17 @@ import { AssignmentFormDialog } from "@/features/assignments/components/Assignme
 import { ResourceList } from "@/features/assignments/components/ResourceList";
 import { AddResourceForm } from "@/features/assignments/components/AddResourceForm";
 import {
-    useAssignment,
-    useAssignmentTaskLinks,
-    useAssignmentResources,
-    useUpdateAssignment,
-    useUpdateAssignmentStatus,
-    useDeleteAssignment,
+    useAssignment, useAssignmentTaskLinks, useAssignmentResources, useUpdateAssignment, useUpdateAssignmentStatus, useDeleteAssignment,
 } from "@/features/assignments/hooks/useAssignments";
 import { useTasks } from "@/features/tasks/hooks/useTasks";
 import { ROUTES } from "@/constants/routes";
 import { ASSIGNMENT_STATUS } from "@/constants/statuses";
 
+/**
+ * Admin view for a single assignment, with editing, deletion, status actions and resource management.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function AdminAssignmentDetailsPage() {
     const { assignmentId } = useParams({ strict: false });
     const navigate = useNavigate();
@@ -52,16 +52,20 @@ export default function AdminAssignmentDetailsPage() {
         taskLinks.some((l) => l.assignmentId === assignment.id && l.taskId === t.id)
     );
 
-    const needsReview =
-        assignment.status === ASSIGNMENT_STATUS.SUBMITTED || assignment.status === ASSIGNMENT_STATUS.UNDER_REVIEW;
+    const needsReview = assignment.status === ASSIGNMENT_STATUS.SUBMITTED || assignment.status === ASSIGNMENT_STATUS.UNDER_REVIEW;
 
     function handleUpdate(values) {
-        updateAssignment.mutateAsync({ id: assignment.id, input: values }).then(() => setEditOpen(false));
+        updateAssignment.mutateAsync({ 
+            id: assignment.id, 
+            input: values 
+        }).then(() => setEditOpen(false));
     }
 
     function handleDelete() {
         deleteAssignment.mutate(assignment.id, {
-            onSuccess: () => navigate({ to: ROUTES.ADMIN_ASSIGNMENTS }),
+            onSuccess: () => navigate({ 
+                to: ROUTES.ADMIN_ASSIGNMENTS 
+            }),
         });
     }
 

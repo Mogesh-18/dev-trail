@@ -6,14 +6,16 @@ import { useTasks } from "@/features/tasks/hooks/useTasks";
 import { useAssignments } from "@/features/assignments/hooks/useAssignments";
 import { useProgress, useActivity } from "@/features/progress/hooks/useProgress";
 import {
-    calculateOverallProgress,
-    calculateAssignmentCompletionRate,
-    calculateStreak,
-    calculateVelocity,
-    findDelayedTasks,
+    calculateOverallProgress, calculateAssignmentCompletionRate, calculateStreak, calculateVelocity, findDelayedTasks,
     summarizeCounts,
 } from "@/features/progress/services/insights.service";
 
+/**
+ * Admin page showing detailed progress statistics, including overall progress,
+ * completion rates, streak, velocity, and delayed tasks.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function AdminProgressPage() {
     const { data: tasks, isLoading: tasksLoading } = useTasks();
     const { data: assignments, isLoading: assignmentsLoading } = useAssignments();

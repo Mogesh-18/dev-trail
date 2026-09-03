@@ -17,6 +17,12 @@ const CONTEXT_LABEL = {
     admin_feedback: "Feedback",
 };
 
+/**
+ * Admin page displaying all notes across tasks and assignments, newest first.
+ * Links back to the entity each note belongs to.
+ * 
+ * @returns {JSX.Element}
+ */
 export default function AdminNotesPage() {
     const { items: notes, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useAllNotesPaginated(15);
     const { data: tasks = [] } = useTasks();

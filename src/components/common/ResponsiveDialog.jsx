@@ -4,10 +4,16 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { BREAKPOINTS } from "@/constants/breakpoints";
 
 /**
- * Renders a centered Dialog on desktop and a full-width bottom Sheet on
- * mobile, behind one consistent API — callers never branch on breakpoint
- * themselves. This is the "Create Task: Dialog / Sheet" pattern from the
- * UI spec made concrete: one component picks the wrapper, not two.
+ * Renders a centered Dialog on desktop and a full‑width bottom Sheet on mobile
+ * using a single consistent API. The underlying wrapper is chosen based on screen size.
+ * 
+ * @param {Object} props
+ * @param {boolean} props.open - Controls visibility.
+ * @param {(open: boolean) => void} props.onOpenChange - Callback for open state changes.
+ * @param {string} props.title - Title displayed in the header.
+ * @param {React.ReactNode} props.children - Content inside the dialog/sheet.
+ * @param {string} [props.contentClassName] - Additional CSS classes for the content container.
+ * @returns {JSX.Element}
  */
 export function ResponsiveDialog({ open, onOpenChange, title, children, contentClassName }) {
     const isDesktop = useMediaQuery(BREAKPOINTS.MD);

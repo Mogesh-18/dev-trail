@@ -3,6 +3,11 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
+/**
+ * A top header bar for mobile devices, showing the app name, theme toggle, and sign‑out button.
+ * 
+ * @returns {JSX.Element}
+ */
 export function MobileHeader() {
     const { signOut } = useAuth();
 

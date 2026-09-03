@@ -1,15 +1,16 @@
 import { Moon, Sun, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { THEMES } from "@/constants/theme";
 import { cn } from "@/lib/utils";
 
+/**
+ * Theme options for the dropdown: light, dark, and system.
+ * Each option includes a display label and a corresponding icon component.
+ * 
+ * @type {Array<{ value: 'light'|'dark'|'system', label: string, Icon: React.ComponentType }>}
+ */
 const OPTIONS = [
     { value: THEMES.LIGHT, label: "Light", Icon: Sun },
     { value: THEMES.DARK, label: "Dark", Icon: Moon },
@@ -17,9 +18,10 @@ const OPTIONS = [
 ];
 
 /**
- * Icon-button + dropdown theme switcher. Works anywhere in the shell
- * (sidebar footer, mobile header, account page) since it only depends on
- * ThemeProvider being mounted above it in the tree.
+ * An icon‑button dropdown that switches between light, dark, and system themes.
+ * Uses `useTheme` from `ThemeProvider` and must be rendered inside it.
+ * 
+ * @returns {JSX.Element}
  */
 export function ThemeToggle() {
     const { theme, setTheme } = useTheme();

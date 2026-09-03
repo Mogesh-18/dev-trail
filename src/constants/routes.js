@@ -1,3 +1,27 @@
+
+/**
+ * Route paths for the entire application.
+ * Some are functions to generate dynamic paths with IDs.
+ * 
+ * @type {{
+ *   LOGIN: string,
+ *   UNAUTHORIZED: string,
+ *   ADMIN_DASHBOARD: string,
+ *   ADMIN_TASKS: string,
+ *   ADMIN_TASK_DETAILS: (taskId: string|number) => string,
+ *   ADMIN_ASSIGNMENTS: string,
+ *   ADMIN_ASSIGNMENT_DETAILS: (assignmentId: string|number) => string,
+ *   ADMIN_PROGRESS: string,
+ *   ADMIN_USERS: string,
+ *   ADMIN_NOTES: string,
+ *   STUDENT_DASHBOARD: string,
+ *   STUDENT_TASKS: string,
+ *   STUDENT_TASK_DETAILS: (taskId: string|number) => string,
+ *   STUDENT_ASSIGNMENTS: string,
+ *   STUDENT_ASSIGNMENT_DETAILS: (assignmentId: string|number) => string,
+ *   STUDENT_ACCOUNT: string,
+ * }}
+ */
 export const ROUTES = {
     LOGIN: "/login",
     UNAUTHORIZED: "/unauthorized",

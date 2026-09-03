@@ -3,6 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAddLinkResource, useUploadFileResource } from "@/features/assignments/hooks/useAssignments";
 
+/**
+ * Form for adding link or file resources to an assignment.
+ * 
+ * @param {Object} props
+ * @param {string|number} props.assignmentId - ID of the assignment.
+ * @returns {JSX.Element}
+ */
 export function AddResourceForm({ assignmentId }) {
     const [linkUrl, setLinkUrl] = useState("");
     const [linkLabel, setLinkLabel] = useState("");
@@ -15,8 +22,16 @@ export function AddResourceForm({ assignmentId }) {
         e.preventDefault();
         if (!linkUrl.trim()) return;
         addLinkResource.mutate(
-            { url: linkUrl.trim(), label: linkLabel.trim() || linkUrl.trim() },
-            { onSuccess: () => { setLinkUrl(""); setLinkLabel(""); } }
+            { 
+                url: linkUrl.trim(), 
+                label: linkLabel.trim() || linkUrl.trim() 
+            },
+            { 
+                onSuccess: () => { 
+                    setLinkUrl(""); 
+                    setLinkLabel(""); 
+                } 
+            }
         );
     }
 
@@ -24,7 +39,9 @@ export function AddResourceForm({ assignmentId }) {
         const file = e.target.files?.[0];
         if (!file) return;
         uploadFileResource.mutate(file, {
-            onSuccess: () => { if (fileInputRef.current) fileInputRef.current.value = ""; },
+            onSuccess: () => { 
+                if (fileInputRef.current) fileInputRef.current.value = ""; 
+            },
         });
     }
 

@@ -4,6 +4,12 @@ import { requireRole } from "@/app/router/guards";
 import { ROLES } from "@/constants/roles";
 import { AppShell } from "@/components/layout/AppShell";
 
+/**
+ * Layout route for all student pages, requiring `STUDENT` role.
+ * Renders the `AppShell` wrapper.
+ * 
+ * @type {Route}
+ */
 export const studentLayoutRoute = createRoute({
     getParentRoute: () => rootRoute,
     id: "student-layout",
