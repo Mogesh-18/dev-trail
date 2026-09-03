@@ -95,6 +95,7 @@ export const AssignmentService = {
         const assignment = await AssignmentRepository.updateStatus(id, status);
         if (status === "submitted") emit(EVENTS.ASSIGNMENT_SUBMITTED, { assignmentId: id });
         if (status === "completed") emit(EVENTS.ASSIGNMENT_COMPLETED, { assignmentId: id });
+        if (status === "changes_requested") emit(EVENTS.ASSIGNMENT_CHANGES_REQUESTED, { assignmentId: id, title: assignment.title });
         return assignment;
     },
 

@@ -14,6 +14,7 @@ import {
 import { useTasks } from "@/features/tasks/hooks/useTasks";
 import { ROUTES } from "@/constants/routes";
 import { ASSIGNMENT_STATUS } from "@/constants/statuses";
+import { SubmissionsSection } from "@/features/assignments/components/SubmissionsSection";
 
 /**
  * Admin view for a single assignment, with editing, deletion, status actions and resource management.
@@ -55,16 +56,16 @@ export default function AdminAssignmentDetailsPage() {
     const needsReview = assignment.status === ASSIGNMENT_STATUS.SUBMITTED || assignment.status === ASSIGNMENT_STATUS.UNDER_REVIEW;
 
     function handleUpdate(values) {
-        updateAssignment.mutateAsync({ 
-            id: assignment.id, 
-            input: values 
+        updateAssignment.mutateAsync({
+            id: assignment.id,
+            input: values
         }).then(() => setEditOpen(false));
     }
 
     function handleDelete() {
         deleteAssignment.mutate(assignment.id, {
-            onSuccess: () => navigate({ 
-                to: ROUTES.ADMIN_ASSIGNMENTS 
+            onSuccess: () => navigate({
+                to: ROUTES.ADMIN_ASSIGNMENTS
             }),
         });
     }
@@ -146,6 +147,11 @@ export default function AdminAssignmentDetailsPage() {
                 <h2 className="font-medium">Resources</h2>
                 <ResourceList assignmentId={assignment.id} resources={resources} />
                 <AddResourceForm assignmentId={assignment.id} />
+            </section>
+
+            <section className="space-y-3 rounded-lg border p-4">
+                <h2 className="font-medium">Submissions</h2>
+                <SubmissionsSection assignmentId={assignment.id} mode="admin" />
             </section>
 
             <AssignmentFormDialog

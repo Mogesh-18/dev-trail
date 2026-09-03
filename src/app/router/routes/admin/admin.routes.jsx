@@ -7,6 +7,7 @@ import AdminAssignmentsPage from "@/features/assignments/pages/AdminAssignmentsP
 import AdminAssignmentDetailsPage from "@/features/assignments/pages/AdminAssignmentDetailsPage";
 import AdminProgressPage from "@/features/progress/pages/AdminProgressPage";
 import AdminNotesPage from "@/features/notes/pages/AdminNotesPage";
+import AdminTimelinePage from "@/features/progress/pages/AdminTimelinePage";
 import UsersPage from "@/features/users/pages/UsersPage";
 
 /**
@@ -95,4 +96,15 @@ export const adminUsersRoute = createRoute({
     getParentRoute: () => adminLayoutRoute,
     path: "users",
     component: UsersPage,
+});
+
+/**
+ * TanStack Router route definition for the admin timeline page.
+ * 
+ * @type {Route}
+ */
+export const adminTimelineRoute = createRoute({
+    getParentRoute: () => adminLayoutRoute,
+    path: "timeline",
+    component: AdminTimelinePage,
 });

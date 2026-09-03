@@ -12,6 +12,7 @@ import { useRenderWindow } from "@/hooks/use-render-window";
 import {
     useTasks, useTaskDependencies, useCreateTask, useUpdateTask, useDeleteTask, useReorderTasks,
 } from "@/features/tasks/hooks/useTasks";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 
 /**
  * Page size
@@ -33,18 +34,41 @@ export default function AdminTasksPage() {
 
     const [formOpen, setFormOpen] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
+    const [prefillFrom, setPrefillFrom] = useState(null);
+    const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
     const [deletingTask, setDeletingTask] = useState(null);
+    const [prefillKind, setPrefillKind] = useState("duplicate");
 
     const orderedTasks = tasks ?? [];
     const { visibleItems, hasMore, loadMore } = useRenderWindow(orderedTasks, PAGE_SIZE);
 
+    const lastCreatedTask = [...orderedTasks].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+
     function handleCreate() {
         setEditingTask(null);
+        setPrefillFrom(null);
         setFormOpen(true);
     }
 
+    function handleCopyLast() {
+        if (!lastCreatedTask) return;
+        setEditingTask(null);
+        setPrefillFrom(lastCreatedTask);
+        setPrefillKind("duplicate");
+        setFormOpen(true);
+    }
+
+    function handlePickTemplate(template) {
+        setEditingTask(null);
+        setPrefillFrom(template);
+        setPrefillKind("template");
+        setFormOpen(true);
+    }
+
+
     function handleEdit(task) {
         setEditingTask(task);
+        setPrefillFrom(null);
         setFormOpen(true);
     }
 
@@ -76,17 +100,31 @@ export default function AdminTasksPage() {
         deleteTask.mutate(deletingTask.id, { onSuccess: () => setDeletingTask(null) });
     }
 
+    useKeyboardShortcut({ key: "n" }, handleCreate);
+
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                     <h1 className="text-2xl font-semibold">Tasks</h1>
                     <p className="text-muted-foreground">The ordered learning path.</p>
                 </div>
-                <Button onClick={handleCreate} className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    New task
-                </Button>
+                <div className="flex gap-2">
+                    {lastCreatedTask && (
+                        <Button variant="outline" size="sm" className="gap-2" onClick={handleCopyLast}>
+                            <Copy className="h-4 w-4" />
+                            Copy last task
+                        </Button>
+                    )}
+                    <Button variant="outline" size="sm" className="gap-2" onClick={() => setTemplatePickerOpen(true)}>
+                        <LayoutTemplate className="h-4 w-4" />
+                        From template
+                    </Button>
+                    <Button onClick={handleCreate} size="sm" className="gap-2">
+                        <Plus className="h-4 w-4" />
+                        New task
+                    </Button>
+                </div>
             </div>
 
             {isLoading && (
@@ -137,11 +175,15 @@ export default function AdminTasksPage() {
                 open={formOpen}
                 onOpenChange={setFormOpen}
                 task={editingTask}
+                prefillFrom={prefillFrom}
+                prefillKind={prefillKind}
                 otherTasks={orderedTasks.filter((t) => t.id !== editingTask?.id)}
                 dependencies={dependencies}
                 onSubmit={handleSubmit}
                 isPending={createTask.isPending || updateTask.isPending}
             />
+
+            <TemplatePickerDialog open={templatePickerOpen} onOpenChange={setTemplatePickerOpen} onPick={handlePickTemplate} />
 
             <ConfirmDeleteDialog
                 open={!!deletingTask}

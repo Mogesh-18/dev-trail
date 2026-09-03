@@ -11,15 +11,20 @@ import { ActivityService } from "@/features/progress/services/activity.service";
  * @type {Record<string, (detail: any) => { type: string, entityType: string, entityId: string | number }>}
  */
 const ACTIVITY_LOG_MAP = {
-    [EVENTS.TASK_STARTED]: (detail) => ({ 
-        type: EVENTS.TASK_STARTED, 
-        entityType: "task", 
-        entityId: detail.taskId 
+    [EVENTS.TASK_STARTED]: (detail) => ({
+        type: EVENTS.TASK_STARTED,
+        entityType: "task",
+        entityId: detail.taskId
     }),
-    [EVENTS.TASK_COMPLETED]: (detail) => ({ 
-        type: EVENTS.TASK_COMPLETED, 
-        entityType: "task", 
-        entityId: detail.taskId 
+    [EVENTS.TASK_COMPLETED]: (detail) => ({
+        type: EVENTS.TASK_COMPLETED,
+        entityType: "task",
+        entityId: detail.taskId
+    }),
+    [EVENTS.REPORT_SUBMITTED]: (detail) => ({
+        type: EVENTS.REPORT_SUBMITTED,
+        entityType: "task",
+        entityId: detail.taskId
     }),
     [EVENTS.ASSIGNMENT_SUBMITTED]: (detail) => ({
         type: EVENTS.ASSIGNMENT_SUBMITTED,
@@ -30,6 +35,50 @@ const ACTIVITY_LOG_MAP = {
         type: EVENTS.ASSIGNMENT_COMPLETED,
         entityType: "assignment",
         entityId: detail.assignmentId,
+    }),
+};
+
+/**
+ * Maps event types to push notification payloads for the opposite role.
+ * Used by `EventListenersProvider` to fire notifications on push-worthy events.
+ * 
+ * @type {Record<string, (detail: any) => { title: string, body: string, url: string }>}
+ */
+const PUSH_NOTIFY_MAP = {
+    [EVENTS.TASK_CREATED]: (detail) => ({ 
+        title: "New task added", 
+        body: detail.title, 
+        url: "/student/tasks" 
+    }),
+    [EVENTS.TASK_COMPLETED]: (detail) => ({ 
+        title: "Task completed", 
+        body: detail.title || "A task was completed", 
+        url: "/admin/progress" 
+    }),
+    [EVENTS.REPORT_SUBMITTED]: () => ({ 
+        title: "New report added", 
+        body: "A new task report was submitted", 
+        url: "/admin/notes" 
+    }),
+    [EVENTS.ASSIGNMENT_CREATED]: (detail) => ({ 
+        title: "New assignment", 
+        body: detail.title, 
+        url: "/student/assignments" 
+    }),
+    [EVENTS.ASSIGNMENT_SUBMITTED]: (detail) => ({ 
+        title: "Assignment submitted", 
+        body: detail.title, 
+        url: "/admin/assignments" 
+    }),
+    [EVENTS.ASSIGNMENT_COMPLETED]: (detail) => ({ 
+        title: "Assignment approved", 
+        body: detail.title, 
+        url: "/student/assignments" 
+    }),
+    [EVENTS.ASSIGNMENT_CHANGES_REQUESTED]: (detail) => ({ 
+        title: "Changes requested", 
+        body: detail.title, 
+        url: "/student/assignments" 
     }),
 };
 
@@ -45,13 +94,25 @@ export function EventListenersProvider({ children }) {
     const queryClient = useQueryClient();
 
     useEffect(() => {
-        const unsubscribers = Object.entries(ACTIVITY_LOG_MAP).map(([eventName, toEntry]) =>
+        const activityUnsubscribers = Object.entries(ACTIVITY_LOG_MAP).map(([eventName, toEntry]) =>
             on(eventName, async (detail) => {
                 await ActivityService.log(toEntry(detail));
-                queryClient.invalidateQueries({ queryKey: ["activity"] });
+                queryClient.invalidateQueries({ 
+                    queryKey: ["activity"] 
+                });
             })
         );
-        return () => unsubscribers.forEach((unsubscribe) => unsubscribe());
+
+        const pushUnsubscribers = Object.entries(PUSH_NOTIFY_MAP).map(([eventName, toPayload]) =>
+            on(eventName, (detail) => {
+                PushService.notifyOtherRole(toPayload(detail));
+            })
+        );
+
+        return () => {
+            activityUnsubscribers.forEach((unsubscribe) => unsubscribe());
+            pushUnsubscribers.forEach((unsubscribe) => unsubscribe());
+        };
     }, [queryClient]);
 
     return children;

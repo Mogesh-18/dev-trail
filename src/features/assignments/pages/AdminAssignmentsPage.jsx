@@ -13,6 +13,7 @@ import {
 } from "@/features/assignments/hooks/useAssignments";
 import { useTasks } from "@/features/tasks/hooks/useTasks";
 import { ROUTES } from "@/constants/routes";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 
 /**
  * Admin list view for all assignments with creation, deletion, and pagination.
@@ -40,6 +41,8 @@ export default function AdminAssignmentsPage() {
         });
     }
 
+    useKeyboardShortcut({ key: "n" }, () => setFormOpen(true));
+    
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
+import { CalendarDays } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { StatCard } from "@/components/common/StatCard";
@@ -60,11 +61,26 @@ export default function AdminDashboardPage() {
     const streak = calculateStreak(activity);
     const velocity = calculateVelocity(activity);
 
+    const statItems = [
+        { key: "total", label: "Total tasks", value: counts.total },
+        { key: "completed", label: "Tasks completed", value: counts.completed },
+        { key: "inProgress", label: "In progress", value: counts.inProgress },
+        { key: "upcoming", label: "Upcoming", value: counts.remaining - counts.inProgress },
+        { key: "totalAssignments", label: "Total assignments", value: assignments.length },
+        { key: "assignmentRate", label: "Assignment completion", value: `${assignmentRate}%` },
+        { key: "pending", label: "Pending review", value: pendingAssignments },
+        { key: "streak", label: "Learning streak", value: `${streak}d` },
+    ];
+
     return (
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-semibold">Admin dashboard</h1>
                 <p className="text-muted-foreground">How the learning path is going.</p>
+                <Link to={ROUTES.ADMIN_TIMELINE} className="mt-1 inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+                    <CalendarDays className="h-4 w-4" />
+                    View timeline & pacing
+                </Link>
             </div>
 
             <div className="space-y-2 rounded-lg border bg-card p-4">
@@ -98,16 +114,7 @@ export default function AdminDashboardPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <StatCard label="Total tasks" value={counts.total} />
-                <StatCard label="Tasks completed" value={counts.completed} />
-                <StatCard label="In progress" value={counts.inProgress} />
-                <StatCard label="Upcoming" value={counts.remaining - counts.inProgress} />
-                <StatCard label="Total assignments" value={assignments.length} />
-                <StatCard label="Assignment completion" value={`${assignmentRate}%`} />
-                <StatCard label="Pending review" value={pendingAssignments} />
-                <StatCard label="Learning streak" value={`${streak}d`} />
-            </div>
+            <DraggableStatGrid storageKey="devtrail-admin-stat-order" items={statItems} />
 
             <div className="grid gap-4 lg:grid-cols-2">
                 <section className="space-y-3 rounded-lg border p-4">

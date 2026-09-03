@@ -26,10 +26,13 @@ export default function StudentTasksPage() {
     const { data: progress = [], isLoading: progressLoading, isError: progressError } = useProgress();
 
     const { inProgress, completed, upcoming } = groupTasksByTab(tasks ?? [], dependencies, progress);
+    const available = upcoming.filter((t) => t.derivedStatus === "available");
+    const blocked = upcoming.filter((t) => t.derivedStatus === "locked");
 
     const inProgressWindow = useRenderWindow(inProgress, PAGE_SIZE);
     const completedWindow = useRenderWindow(completed, PAGE_SIZE);
-    const upcomingWindow = useRenderWindow(upcoming, PAGE_SIZE);
+    const availableWindow = useRenderWindow(available, PAGE_SIZE);
+    const blockedWindow = useRenderWindow(blocked, PAGE_SIZE);
 
     const isLoading = tasksLoading || progressLoading;
     const isError = tasksError || progressError;
@@ -49,6 +52,8 @@ export default function StudentTasksPage() {
             <ErrorState description="Couldn't load your tasks. Check your connection and try again." onRetry={refetchTasks} />
         );
     }
+
+    const progressByTaskId = Object.fromEntries(progress.map((p) => [p.taskId, p]));
 
     return (
         <div className="space-y-4">
@@ -90,15 +95,41 @@ export default function StudentTasksPage() {
                     )}
                 </TabsContent>
 
-                <TabsContent value="upcoming" className="space-y-2">
+                <TabsContent value="upcoming" className="space-y-4">
                     {upcoming.length === 0 ? (
                         <EmptyState icon={ListTodo} title="Nothing upcoming" description="You're all caught up." />
                     ) : (
                         <>
-                            {upcomingWindow.visibleItems.map((task) => (
-                                <StudentTaskCard key={task.id} task={task} index={upcoming.indexOf(task)} />
-                            ))}
-                            <LoadMoreButton onClick={upcomingWindow.loadMore} hasMore={upcomingWindow.hasMore} />
+                            {available.length > 0 && (
+                                <div className="space-y-2">
+                                    <h2 className="text-sm font-medium text-muted-foreground">Available now</h2>
+                                    {availableWindow.visibleItems.map((task) => (
+                                        <StudentTaskCard key={task.id} task={task} index={available.indexOf(task)} />
+                                    ))}
+                                    <LoadMoreButton onClick={availableWindow.loadMore} hasMore={availableWindow.hasMore} />
+                                </div>
+                            )}
+
+                            {blocked.length > 0 && (
+                                <div className="space-y-2">
+                                    <h2 className="text-sm font-medium text-muted-foreground">Blocked — what's in the way</h2>
+                                    {blockedWindow.visibleItems.map((task) => {
+                                        const reasons = getBlockingReasons(task, dependencies, tasks ?? [], progressByTaskId);
+                                        return (
+                                            <div key={task.id} className="flex items-start gap-3 rounded-lg border border-dashed p-3 opacity-80">
+                                                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                                                <div className="min-w-0">
+                                                    <p className="truncate font-medium">{task.title}</p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Waiting on: {reasons.length > 0 ? reasons.join(", ") : "an earlier task"}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                    <LoadMoreButton onClick={blockedWindow.loadMore} hasMore={blockedWindow.hasMore} />
+                                </div>
+                            )}
                         </>
                     )}
                 </TabsContent>

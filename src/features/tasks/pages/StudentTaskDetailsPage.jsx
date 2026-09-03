@@ -8,6 +8,8 @@ import { useTasks, useTaskDependencies } from "@/features/tasks/hooks/useTasks";
 import { useAssignments, useAssignmentTaskLinks } from "@/features/assignments/hooks/useAssignments";
 import { useProgress, useStartTask, useCompleteTask, useReopenTask } from "@/features/progress/hooks/useProgress";
 import { deriveTaskStatus } from "@/features/tasks/services/task-availability.service";
+import { getBlockingReasons } from "@/features/tasks/utils/get-blocking-reasons";
+import { useTaskPresence } from "@/features/tasks/hooks/useTaskPresence";
 import { TASK_STATUS } from "@/constants/statuses";
 import { ROUTES } from "@/constants/routes";
 
@@ -40,6 +42,7 @@ export default function StudentTaskDetailsPage() {
     const task = (tasks ?? []).find((t) => t.id === taskId);
     if (!task) return <p className="text-muted-foreground">Task not found.</p>;
 
+    const otherPresent = useTaskPresence(task?.id);
     const progressByTaskId = Object.fromEntries(progress.map((p) => [p.taskId, p]));
     const status = deriveTaskStatus(task, dependencies, progressByTaskId);
 
@@ -47,16 +50,17 @@ export default function StudentTaskDetailsPage() {
         taskLinks.some((l) => l.taskId === task.id && l.assignmentId === a.id)
     );
 
-    const prerequisiteTitles = dependencies
-        .filter((d) => d.taskId === task.id)
-        .map((d) => (tasks ?? []).find((t) => t.id === d.prerequisiteTaskId)?.title)
-        .filter(Boolean);
+    const prerequisiteTitles = getBlockingReasons(task, dependencies, tasks ?? [], progressByTaskId);
 
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-semibold">{task.title}</h1>
                 <StatusBadge status={status} />
+
+                {otherPresent && (
+                    <p className="text-xs text-muted-foreground">Your admin is viewing this task right now.</p>
+                )}
             </div>
 
             {status === TASK_STATUS.LOCKED && (
@@ -114,6 +118,11 @@ export default function StudentTaskDetailsPage() {
                     </Button>
                 )}
             </div>
+
+            <section className="space-y-3 rounded-lg border p-4">
+                <h2 className="font-medium">Reports</h2>
+                <ReportsSection taskId={task.id} mode="student" />
+            </section>
 
             <section className="space-y-3 rounded-lg border p-4">
                 <h2 className="font-medium">Notes</h2>

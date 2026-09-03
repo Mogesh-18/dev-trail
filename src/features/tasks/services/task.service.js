@@ -32,7 +32,8 @@ export const TaskService = {
             await TaskRepository.setDependencies(task.id, input.prerequisiteTaskIds);
         }
         emit(EVENTS.TASK_CREATED, { 
-            taskId: task.id 
+            taskId: task.id,
+            title: task.title
         });
         return task;
     },

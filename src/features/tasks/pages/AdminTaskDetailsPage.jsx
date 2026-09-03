@@ -100,6 +100,11 @@ export default function AdminTaskDetailsPage() {
             )}
 
             <section className="space-y-3 rounded-lg border p-4">
+                <h2 className="font-medium">Reports</h2>
+                <ReportsSection taskId={task.id} mode="admin" />
+            </section>
+
+            <section className="space-y-3 rounded-lg border p-4">
                 <h2 className="font-medium">Notes</h2>
                 <NotesSection contextType="task" contextId={task.id} />
             </section>

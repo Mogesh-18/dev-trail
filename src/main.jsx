@@ -4,9 +4,13 @@ import { QueryProvider } from "@/app/providers/QueryProvider";
 import { ThemeProvider } from "@/app/providers/ThemeProvider";
 import { AuthProvider } from "@/app/providers/AuthProvider";
 import { EventListenersProvider } from "@/app/providers/EventListenersProvider";
+import { RealtimeProvider } from "@/app/providers/RealtimeProvider";
 import { RouterRoot } from "@/app/router/RouterRoot";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { registerServiceWorker } from "@/lib/register-service-worker";
 import "./index.css";
+
+registerServiceWorker();
 
 /**
  * The application entry point.
@@ -22,7 +26,9 @@ createRoot(document.getElementById("root")).render(
                 <ThemeProvider>
                     <AuthProvider>
                         <EventListenersProvider>
-                            <RouterRoot />
+                            <RealtimeProvider>
+                                <RouterRoot />
+                            </RealtimeProvider>
                         </EventListenersProvider>
                     </AuthProvider>
                 </ThemeProvider>

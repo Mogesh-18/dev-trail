@@ -6,6 +6,7 @@ import { ResourceList } from "@/features/assignments/components/ResourceList";
 import { NotesSection } from "@/features/notes/components/NotesSection";
 import { useAssignment, useAssignmentResources, useUpdateAssignmentStatus } from "@/features/assignments/hooks/useAssignments";
 import { ASSIGNMENT_STATUS } from "@/constants/statuses";
+import { SubmissionsSection } from "@/features/assignments/components/SubmissionsSection";
 
 /**
  * Student view for a single assignment, allowing status updates (start, submit, resubmit) and viewing resources/notes.
@@ -61,6 +62,11 @@ export default function StudentAssignmentDetailsPage() {
             <section className="space-y-3 rounded-lg border p-4">
                 <h2 className="font-medium">Resources</h2>
                 <ResourceList assignmentId={assignment.id} resources={resources} canManage={false} />
+            </section>
+
+            <section className="space-y-3 rounded-lg border p-4">
+                <h2 className="font-medium">Your submissions</h2>
+                <SubmissionsSection assignmentId={assignment.id} mode="student" />
             </section>
 
             <div className="flex gap-2">

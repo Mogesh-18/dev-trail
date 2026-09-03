@@ -10,6 +10,7 @@ import { formatRelativeTime } from "@/utils/format-date";
 const ACTIVITY_LABELS = {
     TASK_STARTED: "started",
     TASK_COMPLETED: "completed",
+    REPORT_SUBMITTED: "added a report to",
     ASSIGNMENT_SUBMITTED: "submitted",
     ASSIGNMENT_COMPLETED: "completed",
 };

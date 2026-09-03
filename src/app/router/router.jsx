@@ -7,8 +7,8 @@ import { adminLayoutRoute } from "@/app/router/routes/admin/admin.layout";
 import { studentLayoutRoute } from "@/app/router/routes/student/student.layout";
 
 import {
-    adminDashboardRoute, adminTasksRoute, adminTaskDetailsRoute, adminAssignmentsRoute, adminAssignmentDetailsRoute, adminProgressRoute, 
-    adminNotesRoute, adminUsersRoute,
+    adminDashboardRoute, adminTasksRoute, adminTaskDetailsRoute, adminAssignmentsRoute, adminAssignmentDetailsRoute, adminProgressRoute,
+    adminNotesRoute, adminUsersRoute, adminTimelineRoute
 } from "@/app/router/routes/admin/admin.routes";
 import {
     studentDashboardRoute, studentTasksRoute, studentTaskDetailsRoute, studentAssignmentsRoute, studentAssignmentDetailsRoute,
@@ -37,6 +37,7 @@ const routeTree = rootRoute.addChildren([
         adminProgressRoute,
         adminNotesRoute,
         adminUsersRoute,
+        adminTimelineRoute,
     ]),
     studentLayoutRoute.addChildren([
         studentDashboardRoute,
@@ -55,8 +56,8 @@ const routeTree = rootRoute.addChildren([
  */
 export const router = createRouter({
     routeTree,
-    context: { 
-        auth: undefined 
+    context: {
+        auth: undefined
     },
     defaultNotFoundComponent: NotFoundPage,
     defaultErrorComponent: RouteErrorPage,

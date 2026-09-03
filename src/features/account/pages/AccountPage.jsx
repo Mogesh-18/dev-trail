@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatCard } from "@/components/common/StatCard";
+import { NotificationToggle } from "@/features/notifications/components/NotificationToggle";
 
 /**
  * Student account page displaying profile, display name form, and learning stats.
@@ -99,6 +100,14 @@ export default function AccountPage() {
                 <Button type="submit" size="sm" disabled={updateProfile.isPending}>
                     {updateProfile.isPending ? "Saving…" : "Save"}
                 </Button>
+
+                <div className="max-w-sm rounded-lg border p-4">
+                    <p className="text-sm font-medium">Notifications</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                        Get notified on this device when a task or assignment changes.
+                    </p>
+                    <NotificationToggle className="mt-3 w-full justify-start gap-2" />
+                </div>
             </form>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
