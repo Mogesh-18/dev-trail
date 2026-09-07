@@ -12,7 +12,7 @@ import { AppShell } from "@/components/layout/AppShell";
  */
 export const adminLayoutRoute = createRoute({
     getParentRoute: () => rootRoute,
-    id: "admin-layout",
+    // id: "admin-layout",
     path: "/admin",
     beforeLoad: requireRole(ROLES.ADMIN),
     component: AppShell,

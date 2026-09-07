@@ -12,7 +12,7 @@ import { AppShell } from "@/components/layout/AppShell";
  */
 export const studentLayoutRoute = createRoute({
     getParentRoute: () => rootRoute,
-    id: "student-layout",
+    // id: "student-layout",
     path: "/student",
     beforeLoad: requireRole(ROLES.STUDENT),
     component: AppShell,
