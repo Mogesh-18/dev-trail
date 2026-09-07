@@ -5,6 +5,7 @@ import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useRealtimeStatus } from "@/app/providers/RealtimeProvider";
 import { cn } from "@/lib/utils";
+import { InstallAppButton } from "../../features/notifications/components/InstallAppButton";
 
 /**
  * A fixed sidebar for desktop devices with navigation links, user email, theme toggle, and sign‑out.
