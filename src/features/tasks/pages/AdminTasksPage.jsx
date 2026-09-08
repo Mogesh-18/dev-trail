@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, ListTodo } from "lucide-react";
+import { Plus, ListTodo, LayoutTemplate } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";

@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { CalendarDays } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { StatCard } from "@/components/common/StatCard";
 import { ActivityTimeline } from "@/features/progress/components/ActivityTimeline";
 import { useTasks, useTaskDependencies } from "@/features/tasks/hooks/useTasks";
 import { useAssignments } from "@/features/assignments/hooks/useAssignments";
@@ -16,6 +15,7 @@ import {
 import { TASK_STATUS, ASSIGNMENT_STATUS } from "@/constants/statuses";
 import { ROUTES } from "@/constants/routes";
 import { formatRelativeTime } from "@/utils/format-date";
+import { DraggableStatGrid } from "../../../components/common/DraggableStatGrid";
 
 /**
  * Admin dashboard showing overall progress, current/next tasks, stats, recent activity, and recent notes.

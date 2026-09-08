@@ -22,7 +22,10 @@ const TASK_LINKS_KEY = ["assignment-task-links"];
  * @returns {import('@tanstack/react-query').UseQueryResult<Array>}
  */
 export function useAssignments() {
-    return useQuery({ queryKey: ASSIGNMENTS_KEY, queryFn: AssignmentService.list });
+    return useQuery({ 
+        queryKey: ASSIGNMENTS_KEY, 
+        queryFn: AssignmentService.list 
+    });
 }
 
 /**

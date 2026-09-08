@@ -67,8 +67,7 @@ export function AssignmentFormDialog({ open, onOpenChange, assignment, allTasks,
         if (!open) return;
         if (assignment) {
             openedUpdatedAtRef.current = assignment.updatedAt ?? null;
-            const taskIds = taskLinks
-                .filter((link) => link.assignmentId === assignment.id)
+            const taskIds = taskLinks.filter((link) => link.assignmentId === assignment.id)
                 .map((link) => link.taskId);
             reset({
                 title: assignment.title,
