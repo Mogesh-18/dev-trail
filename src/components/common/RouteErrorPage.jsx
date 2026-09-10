@@ -11,7 +11,7 @@ import { CompassIcon } from "lucide-react";
  * @param {Error} [props.error]
  * @returns {JSX.Element}
  */
-export function RouteErrorPage({ error }) {
+export default function RouteErrorPage({ error }) {
     return (
         <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center duration-slow animate-in fade-in zoom-in-95">
             <span className="flex h-14 w-14 animate-float items-center justify-center rounded-full bg-destructive/10 text-destructive">
