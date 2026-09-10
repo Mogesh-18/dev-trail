@@ -8,10 +8,19 @@ import { TaskFormDialog } from "@/features/tasks/components/TaskFormDialog";
 import { NotesSection } from "@/features/notes/components/NotesSection";
 import { useTask, useTasks, useTaskDependencies, useUpdateTask, useDeleteTask } from "@/features/tasks/hooks/useTasks";
 import { ROUTES } from "@/constants/routes";
+import { ReportsSection } from "@/features/reports/components/ReportsSection";
+
+const PRIORITY_STYLES = {
+    low: "bg-muted text-muted-foreground",
+    medium: "bg-status-progress/15 text-status-progress",
+    high: "bg-destructive/15 text-destructive",
+};
 
 /**
- * Admin view for a single task, displaying details, prerequisites, notes, and edit/delete actions.
- * 
+ * Admin task detail — priority pill now uses the shared color mapping
+ * from TaskListItem instead of a flat muted badge, and sections
+ * stagger in.
+ *
  * @returns {JSX.Element}
  */
 export default function AdminTaskDetailsPage() {
@@ -51,12 +60,17 @@ export default function AdminTaskDetailsPage() {
         deleteTask.mutate(task.id, { onSuccess: () => navigate({ to: ROUTES.ADMIN_TASKS }) });
     }
 
+    const sections = [
+        task.instructions && { title: "Instructions", body: task.instructions },
+        task.completionCriteria && { title: "Completion criteria", body: task.completionCriteria },
+    ].filter(Boolean);
+
     return (
         <div className="space-y-6">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start justify-between gap-4 duration-slow animate-in fade-in slide-in-from-bottom-1">
                 <div className="flex items-center gap-2">
-                    <h1 className="text-2xl font-semibold">{task.title}</h1>
-                    <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium capitalize text-muted-foreground">
+                    <h1 className="text-2xl font-semibold tracking-tight">{task.title}</h1>
+                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${PRIORITY_STYLES[task.priority]}`}>
                         {task.priority} priority
                     </span>
                 </div>
@@ -65,28 +79,21 @@ export default function AdminTaskDetailsPage() {
                         <Pencil className="h-4 w-4" />
                         Edit
                     </Button>
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => setDeleteOpen(true)}>
+                    <Button variant="outline" size="sm" className="gap-2 hover:text-destructive" onClick={() => setDeleteOpen(true)}>
                         <Trash2 className="h-4 w-4" />
                         Delete
                     </Button>
                 </div>
             </div>
 
-            {task.description && <p className="text-muted-foreground">{task.description}</p>}
+            {task.description && <p className="text-muted-foreground duration-base animate-in fade-in slide-in-from-bottom-1">{task.description}</p>}
 
-            {task.instructions && (
-                <section className="space-y-1">
-                    <h2 className="text-sm font-medium text-muted-foreground">Instructions</h2>
-                    <p className="whitespace-pre-wrap text-sm">{task.instructions}</p>
+            {sections.map((s, i) => (
+                <section key={s.title} style={{ animationDelay: `${i * 60}ms` }} className="space-y-1 duration-base animate-in fade-in slide-in-from-bottom-1 fill-mode-both">
+                    <h2 className="text-sm font-medium text-muted-foreground">{s.title}</h2>
+                    <p className="whitespace-pre-wrap text-sm">{s.body}</p>
                 </section>
-            )}
-
-            {task.completionCriteria && (
-                <section className="space-y-1">
-                    <h2 className="text-sm font-medium text-muted-foreground">Completion criteria</h2>
-                    <p className="whitespace-pre-wrap text-sm">{task.completionCriteria}</p>
-                </section>
-            )}
+            ))}
 
             {prerequisiteTitles.length > 0 && (
                 <section className="space-y-1">
@@ -99,12 +106,12 @@ export default function AdminTaskDetailsPage() {
                 </section>
             )}
 
-            <section className="space-y-3 rounded-lg border p-4">
+            <section className="space-y-3 rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)]">
                 <h2 className="font-medium">Reports</h2>
                 <ReportsSection taskId={task.id} mode="admin" />
             </section>
 
-            <section className="space-y-3 rounded-lg border p-4">
+            <section className="space-y-3 rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)]">
                 <h2 className="font-medium">Notes</h2>
                 <NotesSection contextType="task" contextId={task.id} />
             </section>

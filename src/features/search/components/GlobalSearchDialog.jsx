@@ -8,11 +8,13 @@ import { ROLES } from "@/constants/roles";
 import { ROUTES } from "@/constants/routes";
 
 /**
- * Global search dialog using `Command` UI, showing results for tasks, assignments, notes, and reports.
- * 
+ * Cmd/Ctrl+K global search. Result items get an icon-badge treatment
+ * consistent with SubmissionsSection/ResourceList rather than a bare
+ * icon, and the dialog panel carries the shared shadow-lg.
+ *
  * @param {Object} props
- * @param {boolean} props.open - Controls dialog visibility.
- * @param {(open: boolean) => void} props.onOpenChange - Callback for open state changes.
+ * @param {boolean} props.open
+ * @param {(open: boolean) => void} props.onOpenChange
  * @returns {JSX.Element}
  */
 export function GlobalSearchDialog({ open, onOpenChange }) {
@@ -44,8 +46,10 @@ export function GlobalSearchDialog({ open, onOpenChange }) {
                 {results?.tasks.length > 0 && (
                     <CommandGroup heading="Tasks">
                         {results.tasks.map((r) => (
-                            <CommandItem key={r.id} onSelect={() => go(taskRoute(r.id))}>
-                                <ListChecks className="h-4 w-4 shrink-0 text-muted-foreground" />
+                            <CommandItem key={r.id} onSelect={() => go(taskRoute(r.id))} className="gap-2">
+                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                    <ListChecks className="h-3.5 w-3.5" />
+                                </span>
                                 <span className="truncate">{r.title}</span>
                             </CommandItem>
                         ))}
@@ -55,8 +59,10 @@ export function GlobalSearchDialog({ open, onOpenChange }) {
                 {results?.assignments.length > 0 && (
                     <CommandGroup heading="Assignments">
                         {results.assignments.map((r) => (
-                            <CommandItem key={r.id} onSelect={() => go(assignmentRoute(r.id))}>
-                                <ClipboardList className="h-4 w-4 shrink-0 text-muted-foreground" />
+                            <CommandItem key={r.id} onSelect={() => go(assignmentRoute(r.id))} className="gap-2">
+                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary">
+                                    <ClipboardList className="h-3.5 w-3.5" />
+                                </span>
                                 <span className="truncate">{r.title}</span>
                             </CommandItem>
                         ))}
@@ -69,8 +75,11 @@ export function GlobalSearchDialog({ open, onOpenChange }) {
                             <CommandItem
                                 key={r.id}
                                 onSelect={() => go(r.contextType === "task" ? taskRoute(r.contextId) : assignmentRoute(r.contextId))}
+                                className="gap-2"
                             >
-                                <StickyNote className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
+                                    <StickyNote className="h-3.5 w-3.5" />
+                                </span>
                                 <span className="truncate">{r.snippet}</span>
                             </CommandItem>
                         ))}
@@ -80,8 +89,10 @@ export function GlobalSearchDialog({ open, onOpenChange }) {
                 {results?.reports.length > 0 && (
                     <CommandGroup heading="Reports">
                         {results.reports.map((r) => (
-                            <CommandItem key={r.id} onSelect={() => go(taskRoute(r.taskId))}>
-                                <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                            <CommandItem key={r.id} onSelect={() => go(taskRoute(r.taskId))} className="gap-2">
+                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                                    <FileText className="h-3.5 w-3.5" />
+                                </span>
                                 <span className="truncate">{r.title || r.snippet}</span>
                             </CommandItem>
                         ))}

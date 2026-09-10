@@ -16,8 +16,10 @@ import { ROUTES } from "@/constants/routes";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 
 /**
- * Admin list view for all assignments with creation, deletion, and pagination.
- * 
+ * Admin assignments list. Rows now lift and gain shadow on hover
+ * (the row itself is the click target's visual anchor even though the
+ * title is the link), and entrances stagger in on load.
+ *
  * @returns {JSX.Element}
  */
 export default function AdminAssignmentsPage() {
@@ -36,18 +38,16 @@ export default function AdminAssignmentsPage() {
 
     function handleConfirmDelete() {
         if (!deletingAssignment) return;
-        deleteAssignment.mutate(deletingAssignment.id, { 
-            onSuccess: () => setDeletingAssignment(null) 
-        });
+        deleteAssignment.mutate(deletingAssignment.id, { onSuccess: () => setDeletingAssignment(null) });
     }
 
     useKeyboardShortcut({ key: "n" }, () => setFormOpen(true));
-    
+
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between duration-slow animate-in fade-in slide-in-from-bottom-1">
                 <div>
-                    <h1 className="text-2xl font-semibold">Assignments</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight">Assignments</h1>
                     <p className="text-muted-foreground">Work assigned alongside the learning path.</p>
                 </div>
                 <Button onClick={() => setFormOpen(true)} className="gap-2">
@@ -76,17 +76,21 @@ export default function AdminAssignmentsPage() {
 
             {!isLoading && assignments.length > 0 && (
                 <div className="space-y-2">
-                    {assignments.map((assignment) => (
-                        <div key={assignment.id} className="flex items-center gap-3 rounded-lg border bg-card p-3">
-                            <Link to={ROUTES.ADMIN_ASSIGNMENT_DETAILS(assignment.id)} className="min-w-0 flex-1 hover:underline">
-                                <p className="truncate font-medium">{assignment.title}</p>
+                    {assignments.map((assignment, i) => (
+                        <div
+                            key={assignment.id}
+                            style={{ animationDelay: `${i * 40}ms` }}
+                            className="group flex items-center gap-3 rounded-lg border border-border/60 bg-card p-3 shadow-[var(--shadow-sm)] transition-all duration-base ease-trail duration-base animate-in fade-in slide-in-from-bottom-1 fill-mode-both hover:-translate-y-px hover:border-primary/30 hover:shadow-[var(--shadow-md)]"
+                        >
+                            <Link to={ROUTES.ADMIN_ASSIGNMENT_DETAILS(assignment.id)} className="min-w-0 flex-1">
+                                <p className="truncate font-medium transition-colors duration-fast group-hover:text-primary">{assignment.title}</p>
                                 <p className="text-sm text-muted-foreground">
                                     {taskLinks.filter((l) => l.assignmentId === assignment.id).length} linked task(s)
                                     {assignment.deadline ? ` · due ${assignment.deadline}` : ""}
                                 </p>
                             </Link>
                             <StatusBadge status={assignment.status} />
-                            <Button variant="ghost" size="sm" onClick={() => setDeletingAssignment(assignment)}>
+                            <Button variant="ghost" size="sm" className="hover:text-destructive" onClick={() => setDeletingAssignment(assignment)}>
                                 Delete
                             </Button>
                         </div>

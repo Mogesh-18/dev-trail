@@ -3,93 +3,120 @@
 @tailwind utilities;
 
 /*
-  Theme tokens.
-  - All colors are HSL triplets (no `hsl()` wrapper) so Tailwind can apply
-    opacity modifiers, matching shadcn/ui's convention — any of your 44
-    pasted-in components will read these same variable names out of the box.
-  - Light mode is intentionally vibrant (saturated indigo primary, warm
-    amber accent) rather than the flat gray shadcn default, per request.
-  - Dark mode stays a calmer, desaturated version of the same hues so the
-    product still feels like one brand across both modes.
+  DevTrail theme — "trail map" identity, vivid palette.
+
+  Every neutral is warmth-tinted (never true gray) and every semantic
+  color sits in a vivid, mid-range saturation/lightness band — no pale
+  washed-out tones, no muddy darks. HSL triplets (no hsl() wrapper) per
+  shadcn convention so pasted-in components still work.
 */
 
 @layer base {
     :root {
-        --background: 240 25% 98%;
-        --foreground: 240 10% 12%;
+        --background: 45 32% 95%;
+        /* warm vivid paper */
+        --foreground: 152 30% 11%;
+        /* deep vivid pine-black ink */
 
-        --card: 0 0% 100%;
-        --card-foreground: 240 10% 12%;
+        --card: 45 36% 98%;
+        --card-foreground: 152 30% 11%;
 
-        --popover: 0 0% 100%;
-        --popover-foreground: 240 10% 12%;
+        --popover: 45 36% 98%;
+        --popover-foreground: 152 30% 11%;
 
-        --primary: 243 75% 59%;
-        /* vibrant indigo */
-        --primary-foreground: 0 0% 100%;
+        /* Pine — primary, also the "completed" trail state */
+        --primary: 152 62% 30%;
+        --primary-foreground: 45 36% 98%;
 
-        --secondary: 174 72% 40%;
-        /* vibrant teal */
-        --secondary-foreground: 0 0% 100%;
+        /* Sky — secondary, links, the "available" trail state */
+        --secondary: 205 72% 44%;
+        --secondary-foreground: 45 36% 98%;
 
-        --accent: 32 95% 55%;
-        /* vibrant amber */
-        --accent-foreground: 20 40% 15%;
+        /* Rust — the one deliberate accent. Spend it sparingly. */
+        --accent: 20 82% 50%;
+        --accent-foreground: 45 36% 98%;
 
-        --muted: 240 15% 94%;
-        --muted-foreground: 240 8% 42%;
+        --muted: 95 16% 90%;
+        /* warm sage, not gray */
+        --muted-foreground: 152 18% 32%;
 
-        --destructive: 0 84% 60%;
-        --destructive-foreground: 0 0% 100%;
+        --destructive: 5 75% 48%;
+        --destructive-foreground: 45 36% 98%;
 
-        --border: 240 15% 88%;
-        --input: 240 15% 88%;
-        --ring: 243 75% 59%;
+        --border: 45 22% 80%;
+        /* warm tan, not gray */
+        --input: 45 22% 80%;
+        --ring: 152 62% 30%;
 
-        /* Status colors — referenced by StatusBadge, task cards, dashboards */
-        --status-locked: 240 8% 65%;
-        --status-available: 217 91% 60%;
-        --status-progress: 32 95% 55%;
-        --status-completed: 152 65% 40%;
-        --status-skipped: 0 0% 55%;
+        /* Trail states */
+        --status-locked: 250 14% 56%;
+        /* dim by design: inactive checkpoint */
+        --status-available: 205 78% 52%;
+        --status-progress: 38 92% 52%;
+        --status-completed: 150 65% 36%;
+        --status-skipped: 20 10% 54%;
+        /* dim by design: bypassed checkpoint */
 
-        --radius: 0.65rem;
+        --radius: 0.75rem;
+
+        --ease-trail: cubic-bezier(0.16, 1, 0.3, 1);
+        --duration-fast: 120ms;
+        --duration-base: 220ms;
+        --duration-slow: 380ms;
+
+        /* Tinted elevation — shadows carry the brand hue instead of flat black, which is most of what separates "flat SaaS" from "premium." */
+        --shadow-color: 152 40% 15%;
+        --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.06);
+        --shadow-md: 0 6px 16px -4px hsl(var(--shadow-color) / 0.14), 0 2px 6px -2px hsl(var(--shadow-color) / 0.08);
+        --shadow-lg: 0 16px 40px -12px hsl(var(--shadow-color) / 0.22), 0 4px 12px -4px hsl(var(--shadow-color) / 0.12);
+        --shadow-glow-primary: 0 0 0 1px hsl(var(--primary) / 0.16), 0 10px 28px -10px hsl(var(--primary) / 0.4);
+        --shadow-glow-accent: 0 0 0 1px hsl(var(--accent) / 0.18), 0 10px 28px -10px hsl(var(--accent) / 0.4);
+
+        /* A springier curve for things that should feel pressed/released (buttons, dialog entrance), distinct from --ease-trail's calmer glide used for page-level motion. */
+        --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .dark {
-        --background: 240 15% 8%;
-        --foreground: 240 10% 92%;
+        --background: 152 30% 7%;
+        /* deep vivid night trail */
+        --foreground: 45 28% 94%;
 
-        --card: 240 14% 11%;
-        --card-foreground: 240 10% 92%;
+        --card: 152 26% 10%;
+        --card-foreground: 45 28% 94%;
 
-        --popover: 240 14% 11%;
-        --popover-foreground: 240 10% 92%;
+        --popover: 152 26% 10%;
+        --popover-foreground: 45 28% 94%;
 
-        --primary: 243 80% 68%;
-        --primary-foreground: 240 15% 8%;
+        --primary: 150 58% 55%;
+        --primary-foreground: 152 30% 7%;
 
-        --secondary: 174 55% 45%;
-        --secondary-foreground: 240 15% 8%;
+        --secondary: 205 70% 62%;
+        --secondary-foreground: 152 30% 7%;
 
-        --accent: 32 80% 58%;
-        --accent-foreground: 240 15% 8%;
+        --accent: 20 78% 58%;
+        --accent-foreground: 152 30% 7%;
 
-        --muted: 240 10% 16%;
-        --muted-foreground: 240 8% 64%;
+        --muted: 100 14% 16%;
+        /* warm dark sage, not gray */
+        --muted-foreground: 45 14% 68%;
 
-        --destructive: 0 70% 55%;
-        --destructive-foreground: 0 0% 100%;
+        --destructive: 5 70% 55%;
+        --destructive-foreground: 45 28% 94%;
 
-        --border: 240 10% 20%;
-        --input: 240 10% 20%;
-        --ring: 243 80% 68%;
+        --border: 90 14% 20%;
+        --input: 90 14% 20%;
+        --ring: 150 58% 55%;
 
-        --status-locked: 240 6% 42%;
-        --status-available: 217 85% 65%;
-        --status-progress: 32 80% 58%;
-        --status-completed: 152 55% 48%;
-        --status-skipped: 0 0% 45%;
+        --status-locked: 250 12% 46%;
+        --status-available: 205 72% 62%;
+        --status-progress: 38 82% 60%;
+        --status-completed: 150 58% 55%;
+        --status-skipped: 20 8% 44%;
+
+        --shadow-color: 152 60% 2%;
+        --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.4);
+        --shadow-md: 0 6px 16px -4px hsl(var(--shadow-color) / 0.5), 0 2px 6px -2px hsl(var(--shadow-color) / 0.3);
+        --shadow-lg: 0 16px 40px -12px hsl(var(--shadow-color) / 0.6), 0 4px 12px -4px hsl(var(--shadow-color) / 0.4);
     }
 }
 
@@ -100,14 +127,33 @@
 
     body {
         @apply bg-background text-foreground;
+        font-family: "General Sans", ui-sans-serif, system-ui, sans-serif;
         font-feature-settings: "cv11", "ss01";
         -webkit-font-smoothing: antialiased;
         -webkit-tap-highlight-color: transparent;
     }
 }
 
-/* Avoid a flash of the wrong theme before React hydrates — see the
-   blocking inline script in index.html's <head> that sets this class. */
 html {
     color-scheme: light dark;
+}
+
+/* Custom scrollbar — a small detail default browser chrome always gives away */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 999px;
+    border: 2px solid hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
 }

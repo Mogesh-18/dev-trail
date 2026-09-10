@@ -5,19 +5,27 @@ import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 /**
- * Card component for a student task in the task list. If locked, shows a lock icon and is not clickable.
- * 
+ * Student task card. Unlocked cards lift and gain shadow on hover;
+ * locked cards stay flat and desaturated by design — the visual
+ * difference between "you can act on this" and "you can't yet" should
+ * be obvious without reading the badge.
+ *
  * @param {Object} props
- * @param {Object} props.task - Task object with `derivedStatus`.
- * @param {number} props.index - Task index (for numbering).
+ * @param {Object} props.task - Task with `derivedStatus`.
+ * @param {number} props.index
  * @returns {JSX.Element}
  */
 export function StudentTaskCard({ task, index }) {
     const locked = task.derivedStatus === "locked";
 
     const content = (
-        <div className={cn("flex items-center gap-3 rounded-lg border bg-card p-3", locked && "opacity-60")}>
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
+        <div
+            className={cn(
+                "flex items-center gap-3 rounded-lg border border-border/60 bg-card p-3 transition-all duration-base ease-trail",
+                locked ? "opacity-60" : "shadow-[var(--shadow-sm)] hover:-translate-y-px hover:border-primary/30 hover:shadow-[var(--shadow-md)]"
+            )}
+        >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted font-mono text-xs font-medium text-muted-foreground">
                 {index + 1}
             </div>
             <div className="min-w-0 flex-1">

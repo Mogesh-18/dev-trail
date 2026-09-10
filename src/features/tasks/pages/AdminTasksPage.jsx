@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, ListTodo, LayoutTemplate } from "lucide-react";
+import { Plus, ListTodo, LayoutTemplate, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -13,6 +13,7 @@ import {
     useTasks, useTaskDependencies, useCreateTask, useUpdateTask, useDeleteTask, useReorderTasks,
 } from "@/features/tasks/hooks/useTasks";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
+import { TemplatePickerDialog } from "@/features/tasks/components/TemplatePickerDialog";
 
 /**
  * Page size
@@ -20,8 +21,11 @@ import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 const PAGE_SIZE = 10;
 
 /**
- * Admin list view for all tasks with create, edit, delete, reorder, and pagination.
- * 
+ * Admin task list. Rows now stagger in via a wrapper (TaskListItem
+ * itself doesn't own entrance timing, since it's reused without index
+ * context elsewhere) so reordering doesn't visually clash with the
+ * initial-load stagger.
+ *
  * @returns {JSX.Element}
  */
 export default function AdminTasksPage() {
@@ -65,7 +69,6 @@ export default function AdminTasksPage() {
         setFormOpen(true);
     }
 
-
     function handleEdit(task) {
         setEditingTask(task);
         setPrefillFrom(null);
@@ -104,9 +107,9 @@ export default function AdminTasksPage() {
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 duration-slow animate-in fade-in slide-in-from-bottom-1">
                 <div>
-                    <h1 className="text-2xl font-semibold">Tasks</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
                     <p className="text-muted-foreground">The ordered learning path.</p>
                 </div>
                 <div className="flex gap-2">
@@ -135,9 +138,7 @@ export default function AdminTasksPage() {
                 </div>
             )}
 
-            {isError && (
-                <ErrorState description="Couldn't load tasks. Check your connection and try again." onRetry={refetch} />
-            )}
+            {isError && <ErrorState description="Couldn't load tasks. Check your connection and try again." onRetry={refetch} />}
 
             {!isLoading && !isError && orderedTasks.length === 0 && (
                 <EmptyState
@@ -151,20 +152,25 @@ export default function AdminTasksPage() {
 
             {!isLoading && !isError && orderedTasks.length > 0 && (
                 <div className="space-y-2">
-                    {visibleItems.map((task) => {
+                    {visibleItems.map((task, i) => {
                         const index = orderedTasks.findIndex((t) => t.id === task.id);
                         return (
-                            <TaskListItem
+                            <div
                                 key={task.id}
-                                task={task}
-                                index={index}
-                                total={orderedTasks.length}
-                                prerequisiteCount={dependencies.filter((d) => d.taskId === task.id).length}
-                                onMoveUp={handleMoveUp}
-                                onMoveDown={handleMoveDown}
-                                onEdit={handleEdit}
-                                onDelete={setDeletingTask}
-                            />
+                                style={{ animationDelay: `${Math.min(i, 10) * 30}ms` }}
+                                className="duration-base animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
+                            >
+                                <TaskListItem
+                                    task={task}
+                                    index={index}
+                                    total={orderedTasks.length}
+                                    prerequisiteCount={dependencies.filter((d) => d.taskId === task.id).length}
+                                    onMoveUp={handleMoveUp}
+                                    onMoveDown={handleMoveDown}
+                                    onEdit={handleEdit}
+                                    onDelete={setDeletingTask}
+                                />
+                            </div>
                         );
                     })}
                     <LoadMoreButton onClick={loadMore} hasMore={hasMore} />

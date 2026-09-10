@@ -1,72 +1,57 @@
 import { Link } from "@tanstack/react-router";
-import { LogOut, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/common/ThemeToggle";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useRealtimeStatus } from "@/app/providers/RealtimeProvider";
+import { BrandMark } from "@/components/common/BrandMark";
+import { InstallAppButton } from "@/features/notifications/components/InstallAppButton";
 import { cn } from "@/lib/utils";
-import { InstallAppButton } from "../../features/notifications/components/InstallAppButton";
-import { NotificationToggle } from "../../features/notifications/components/NotificationToggle";
 
 /**
- * A fixed sidebar for desktop devices with navigation links, user email, theme toggle, and sign‑out.
- * 
+ * Desktop sidebar — vertical trail nav. Active item now gets a tinted
+ * glow shadow on its marker dot (matching StatCard's language) and a
+ * slide-right on hover instead of just a color swap; live-sync dot
+ * pulses gently while connected instead of sitting static.
+ *
  * @param {Object} props
- * @param {Array<{ label: string, to: string, icon: React.ComponentType }>} props.navItems - Navigation items.
+ * @param {Array<{ label: string, to: string, icon: React.ComponentType }>} props.navItems
  * @returns {JSX.Element}
  */
-export function Sidebar({ navItems, onOpenSearch }) {
-    const { user, signOut } = useAuth();
+export function Sidebar({ navItems }) {
     const { connected } = useRealtimeStatus();
 
     return (
-        <aside className="hidden w-60 shrink-0 flex-col border-r bg-card md:flex">
-            <div className="flex items-center justify-between px-5 py-5">
-                <span className="text-lg font-semibold">DevTrail</span>
+        <aside className="hidden w-64 shrink-0 flex-col border-r border-border/60 bg-card md:flex">
+            <div className="group flex items-center gap-2.5 px-6 py-6">
+                <BrandMark className="h-5 w-5 text-primary" />
+                <span className="text-lg font-semibold tracking-tight">DevTrail</span>
                 <span
-                    className={cn("h-2 w-2 rounded-full", connected ? "bg-status-completed" : "bg-status-locked")}
+                    className={cn(
+                        "ml-auto h-2 w-2 rounded-full transition-colors duration-base",
+                        connected ? "animate-pulse-glow bg-status-completed" : "bg-status-locked"
+                    )}
                     title={connected ? "Live sync connected" : "Reconnecting…"}
                 />
             </div>
 
-            <div className="px-3">
-                <Button variant="outline" size="sm" className="w-full justify-start gap-2 text-muted-foreground" onClick={onOpenSearch}>
-                    <Search className="h-4 w-4" />
-                    Search…
-                    <kbd className="ml-auto rounded border bg-muted px-1.5 py-0.5 text-[10px]">⌘K</kbd>
-                </Button>
-            </div>
-
-            <nav className="flex-1 space-y-1 px-3 pt-3">
-                {navItems.map((item) => (
+            <nav className="relative flex-1 space-y-0.5 px-4 pt-2">
+                <div className="pointer-events-none absolute bottom-4 left-[15px] top-2 w-px bg-border" />
+                {navItems.map((item, i) => (
                     <Link
                         key={item.to}
                         to={item.to}
-                        className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground [&.active]:bg-primary/10 [&.active]:text-primary"
+                        style={{ animationDelay: `${i * 40}ms` }}
+                        className="group relative flex items-center gap-3 rounded-md py-2 pl-0.5 pr-3 text-sm font-medium text-muted-foreground duration-base ease-trail animate-in fade-in slide-in-from-left-2 fill-mode-both transition-[color,transform] hover:translate-x-0.5 hover:text-foreground [&.active]:bg-primary/10 [&.active]:text-foreground"
                         activeProps={{ className: "active" }}
                     >
-                        <item.icon className="h-4 w-4" />
-                        {item.label}
+                        <span className="relative z-10 flex h-4 w-4 shrink-0 items-center justify-center">
+                            <span className="h-2 w-2 rounded-full border-2 border-border bg-card transition-all duration-base ease-spring group-[.active]:scale-110 group-[.active]:border-primary group-[.active]:bg-primary group-[.active]:shadow-[var(--shadow-glow-primary)]" />
+                        </span>
+                        <item.icon className="h-4 w-4 shrink-0 transition-transform duration-base group-hover:scale-110" />
+                        <span className="truncate">{item.label}</span>
                     </Link>
                 ))}
             </nav>
 
-            <div className="space-y-2 border-t px-3 py-3">
+            <div className="border-t border-border/60 px-4 py-4">
                 <InstallAppButton />
-                <NotificationToggle className="w-full justify-start gap-2" />
-                <div className="flex items-center justify-between px-1">
-                    <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
-                    <ThemeToggle />
-                </div>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start gap-2"
-                    onClick={() => signOut()}
-                >
-                    <LogOut className="h-4 w-4" />
-                    Sign out
-                </Button>
             </div>
         </aside>
     );

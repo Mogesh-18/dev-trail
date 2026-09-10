@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "@tanstack/react-router";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/common/StatusBadge";
@@ -17,8 +17,11 @@ import { ASSIGNMENT_STATUS } from "@/constants/statuses";
 import { SubmissionsSection } from "@/features/assignments/components/SubmissionsSection";
 
 /**
- * Admin view for a single assignment, with editing, deletion, status actions and resource management.
- * 
+ * Admin assignment detail view. Sections now stagger in, the "needs
+ * review" banner reads as a real callout (amber-tinted, icon badge)
+ * instead of a plain bordered row, and edit/delete actions use the
+ * shared button shadow/press language.
+ *
  * @returns {JSX.Element}
  */
 export default function AdminAssignmentDetailsPage() {
@@ -56,26 +59,27 @@ export default function AdminAssignmentDetailsPage() {
     const needsReview = assignment.status === ASSIGNMENT_STATUS.SUBMITTED || assignment.status === ASSIGNMENT_STATUS.UNDER_REVIEW;
 
     function handleUpdate(values) {
-        updateAssignment.mutateAsync({
-            id: assignment.id,
-            input: values
-        }).then(() => setEditOpen(false));
+        updateAssignment.mutateAsync({ id: assignment.id, input: values }).then(() => setEditOpen(false));
     }
 
     function handleDelete() {
         deleteAssignment.mutate(assignment.id, {
-            onSuccess: () => navigate({
-                to: ROUTES.ADMIN_ASSIGNMENTS
-            }),
+            onSuccess: () => navigate({ to: ROUTES.ADMIN_ASSIGNMENTS }),
         });
     }
 
+    const sections = [
+        assignment.instructions && { title: "Instructions", body: assignment.instructions },
+        assignment.requirements && { title: "Requirements", body: assignment.requirements },
+        assignment.acceptanceCriteria && { title: "Acceptance criteria", body: assignment.acceptanceCriteria },
+    ].filter(Boolean);
+
     return (
         <div className="space-y-6">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start justify-between gap-4 duration-slow animate-in fade-in slide-in-from-bottom-1">
                 <div>
                     <div className="flex items-center gap-2">
-                        <h1 className="text-2xl font-semibold">{assignment.title}</h1>
+                        <h1 className="text-2xl font-semibold tracking-tight">{assignment.title}</h1>
                         <StatusBadge status={assignment.status} />
                     </div>
                     {assignment.deadline && <p className="text-sm text-muted-foreground">Due {assignment.deadline}</p>}
@@ -85,7 +89,7 @@ export default function AdminAssignmentDetailsPage() {
                         <Pencil className="h-4 w-4" />
                         Edit
                     </Button>
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => setDeleteOpen(true)}>
+                    <Button variant="outline" size="sm" className="gap-2 hover:text-destructive" onClick={() => setDeleteOpen(true)}>
                         <Trash2 className="h-4 w-4" />
                         Delete
                     </Button>
@@ -93,8 +97,11 @@ export default function AdminAssignmentDetailsPage() {
             </div>
 
             {needsReview && (
-                <section className="flex items-center gap-2 rounded-lg border p-4">
-                    <span className="mr-auto text-sm text-muted-foreground">Waiting on your review.</span>
+                <section className="flex items-center gap-3 rounded-lg border border-status-progress/30 bg-status-progress/10 p-4 shadow-[var(--shadow-sm)] duration-base animate-in fade-in slide-in-from-bottom-1">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-status-progress/20 text-status-progress">
+                        <Clock className="h-4 w-4" />
+                    </span>
+                    <span className="mr-auto text-sm font-medium">Waiting on your review.</span>
                     <Button
                         variant="outline"
                         onClick={() => updateStatus.mutate({ id: assignment.id, status: ASSIGNMENT_STATUS.CHANGES_REQUESTED })}
@@ -111,26 +118,16 @@ export default function AdminAssignmentDetailsPage() {
                 </section>
             )}
 
-            {assignment.instructions && (
-                <section className="space-y-1">
-                    <h2 className="text-sm font-medium text-muted-foreground">Instructions</h2>
-                    <p className="whitespace-pre-wrap text-sm">{assignment.instructions}</p>
+            {sections.map((s, i) => (
+                <section
+                    key={s.title}
+                    style={{ animationDelay: `${i * 60}ms` }}
+                    className="space-y-1 duration-base animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
+                >
+                    <h2 className="text-sm font-medium text-muted-foreground">{s.title}</h2>
+                    <p className="whitespace-pre-wrap text-sm">{s.body}</p>
                 </section>
-            )}
-
-            {assignment.requirements && (
-                <section className="space-y-1">
-                    <h2 className="text-sm font-medium text-muted-foreground">Requirements</h2>
-                    <p className="whitespace-pre-wrap text-sm">{assignment.requirements}</p>
-                </section>
-            )}
-
-            {assignment.acceptanceCriteria && (
-                <section className="space-y-1">
-                    <h2 className="text-sm font-medium text-muted-foreground">Acceptance criteria</h2>
-                    <p className="whitespace-pre-wrap text-sm">{assignment.acceptanceCriteria}</p>
-                </section>
-            )}
+            ))}
 
             {linkedTasks.length > 0 && (
                 <section className="space-y-1">
@@ -143,13 +140,13 @@ export default function AdminAssignmentDetailsPage() {
                 </section>
             )}
 
-            <section className="space-y-3 rounded-lg border p-4">
+            <section className="space-y-3 rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)]">
                 <h2 className="font-medium">Resources</h2>
                 <ResourceList assignmentId={assignment.id} resources={resources} />
                 <AddResourceForm assignmentId={assignment.id} />
             </section>
 
-            <section className="space-y-3 rounded-lg border p-4">
+            <section className="space-y-3 rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)]">
                 <h2 className="font-medium">Submissions</h2>
                 <SubmissionsSection assignmentId={assignment.id} mode="admin" />
             </section>

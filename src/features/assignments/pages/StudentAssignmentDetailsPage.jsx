@@ -9,8 +9,9 @@ import { ASSIGNMENT_STATUS } from "@/constants/statuses";
 import { SubmissionsSection } from "@/features/assignments/components/SubmissionsSection";
 
 /**
- * Student view for a single assignment, allowing status updates (start, submit, resubmit) and viewing resources/notes.
- * 
+ * Student assignment detail view, staggered sections + shared card
+ * shadow language.
+ *
  * @returns {JSX.Element}
  */
 export default function StudentAssignmentDetailsPage() {
@@ -30,67 +31,56 @@ export default function StudentAssignmentDetailsPage() {
 
     if (!assignment) return <p className="text-muted-foreground">Assignment not found.</p>;
 
+    const sections = [
+        assignment.instructions && { title: "Instructions", body: assignment.instructions },
+        assignment.requirements && { title: "Requirements", body: assignment.requirements },
+        assignment.acceptanceCriteria && { title: "Acceptance criteria", body: assignment.acceptanceCriteria },
+    ].filter(Boolean);
+
     return (
         <div className="space-y-6">
-            <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-semibold">{assignment.title}</h1>
-                <StatusBadge status={assignment.status} />
+            <div className="duration-slow animate-in fade-in slide-in-from-bottom-1">
+                <div className="flex items-center gap-2">
+                    <h1 className="text-2xl font-semibold tracking-tight">{assignment.title}</h1>
+                    <StatusBadge status={assignment.status} />
+                </div>
+                {assignment.deadline && <p className="text-sm text-muted-foreground">Due {assignment.deadline}</p>}
             </div>
-            {assignment.deadline && <p className="text-sm text-muted-foreground">Due {assignment.deadline}</p>}
 
-            {assignment.instructions && (
-                <section className="space-y-1">
-                    <h2 className="text-sm font-medium text-muted-foreground">Instructions</h2>
-                    <p className="whitespace-pre-wrap text-sm">{assignment.instructions}</p>
+            {sections.map((s, i) => (
+                <section
+                    key={s.title}
+                    style={{ animationDelay: `${i * 60}ms` }}
+                    className="space-y-1 duration-base animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
+                >
+                    <h2 className="text-sm font-medium text-muted-foreground">{s.title}</h2>
+                    <p className="whitespace-pre-wrap text-sm">{s.body}</p>
                 </section>
-            )}
+            ))}
 
-            {assignment.requirements && (
-                <section className="space-y-1">
-                    <h2 className="text-sm font-medium text-muted-foreground">Requirements</h2>
-                    <p className="whitespace-pre-wrap text-sm">{assignment.requirements}</p>
-                </section>
-            )}
-
-            {assignment.acceptanceCriteria && (
-                <section className="space-y-1">
-                    <h2 className="text-sm font-medium text-muted-foreground">Acceptance criteria</h2>
-                    <p className="whitespace-pre-wrap text-sm">{assignment.acceptanceCriteria}</p>
-                </section>
-            )}
-
-            <section className="space-y-3 rounded-lg border p-4">
+            <section className="space-y-3 rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)]">
                 <h2 className="font-medium">Resources</h2>
                 <ResourceList assignmentId={assignment.id} resources={resources} canManage={false} />
             </section>
 
-            <section className="space-y-3 rounded-lg border p-4">
+            <section className="space-y-3 rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)]">
                 <h2 className="font-medium">Your submissions</h2>
                 <SubmissionsSection assignmentId={assignment.id} mode="student" />
             </section>
 
             <div className="flex gap-2">
                 {assignment.status === ASSIGNMENT_STATUS.NOT_STARTED && (
-                    <Button
-                        onClick={() => updateStatus.mutate({ id: assignment.id, status: ASSIGNMENT_STATUS.IN_PROGRESS })}
-                        disabled={updateStatus.isPending}
-                    >
+                    <Button onClick={() => updateStatus.mutate({ id: assignment.id, status: ASSIGNMENT_STATUS.IN_PROGRESS })} disabled={updateStatus.isPending}>
                         Start assignment
                     </Button>
                 )}
                 {assignment.status === ASSIGNMENT_STATUS.IN_PROGRESS && (
-                    <Button
-                        onClick={() => updateStatus.mutate({ id: assignment.id, status: ASSIGNMENT_STATUS.SUBMITTED })}
-                        disabled={updateStatus.isPending}
-                    >
+                    <Button onClick={() => updateStatus.mutate({ id: assignment.id, status: ASSIGNMENT_STATUS.SUBMITTED })} disabled={updateStatus.isPending}>
                         Submit assignment
                     </Button>
                 )}
                 {assignment.status === ASSIGNMENT_STATUS.CHANGES_REQUESTED && (
-                    <Button
-                        onClick={() => updateStatus.mutate({ id: assignment.id, status: ASSIGNMENT_STATUS.SUBMITTED })}
-                        disabled={updateStatus.isPending}
-                    >
+                    <Button onClick={() => updateStatus.mutate({ id: assignment.id, status: ASSIGNMENT_STATUS.SUBMITTED })} disabled={updateStatus.isPending}>
                         Resubmit
                     </Button>
                 )}
@@ -99,7 +89,7 @@ export default function StudentAssignmentDetailsPage() {
                 )}
             </div>
 
-            <section className="space-y-3 rounded-lg border p-4">
+            <section className="space-y-3 rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)]">
                 <h2 className="font-medium">Notes</h2>
                 <NotesSection contextType="assignment" contextId={assignment.id} />
             </section>

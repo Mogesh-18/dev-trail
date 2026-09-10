@@ -1,29 +1,52 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { BREAKPOINTS } from "@/constants/breakpoints";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetDescription,
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 /**
- * Renders a centered Dialog on desktop and a full‑width bottom Sheet on mobile
- * using a single consistent API. The underlying wrapper is chosen based on screen size.
- * 
+ * Dialog on desktop, bottom Sheet on mobile. `contentClassName` lets
+ * callers (e.g. AssignmentFormDialog's `sm:max-w-lg`) size the panel
+ * without fighting the base entrance/shadow classes.
+ *
  * @param {Object} props
- * @param {boolean} props.open - Controls visibility.
- * @param {(open: boolean) => void} props.onOpenChange - Callback for open state changes.
- * @param {string} props.title - Title displayed in the header.
- * @param {React.ReactNode} props.children - Content inside the dialog/sheet.
- * @param {string} [props.contentClassName] - Additional CSS classes for the content container.
+ * @param {boolean} props.open
+ * @param {(open: boolean) => void} props.onOpenChange
+ * @param {string} props.title
+ * @param {string} [props.description]
+ * @param {string} [props.contentClassName]
+ * @param {React.ReactNode} props.children
  * @returns {JSX.Element}
  */
-export function ResponsiveDialog({ open, onOpenChange, title, children, contentClassName }) {
-    const isDesktop = useMediaQuery(BREAKPOINTS.MD);
+export function ResponsiveDialog({ open, onOpenChange, title, description, contentClassName, children }) {
+    const isDesktop = useMediaQuery("(min-width: 768px)");
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent className={contentClassName}>
+                <DialogContent
+                    className={cn(
+                        "shadow-[var(--shadow-lg)]",
+                        "data-[state=open]:duration-base data-[state=open]:ease-trail",
+                        "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95",
+                        "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95",
+                        contentClassName
+                    )}
+                >
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
+                        {description && <DialogDescription>{description}</DialogDescription>}
                     </DialogHeader>
                     {children}
                 </DialogContent>
@@ -33,11 +56,19 @@ export function ResponsiveDialog({ open, onOpenChange, title, children, contentC
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent side="bottom" className={contentClassName}>
+            <SheetContent
+                side="bottom"
+                className={cn(
+                    "max-h-[88vh] overflow-y-auto rounded-t-xl shadow-[var(--shadow-lg)]",
+                    "data-[state=open]:duration-base data-[state=open]:ease-trail",
+                    contentClassName
+                )}
+            >
                 <SheetHeader>
                     <SheetTitle>{title}</SheetTitle>
+                    {description && <SheetDescription>{description}</SheetDescription>}
                 </SheetHeader>
-                <div className="mt-4">{children}</div>
+                {children}
             </SheetContent>
         </Sheet>
     );

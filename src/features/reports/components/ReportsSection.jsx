@@ -5,20 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadMoreButton } from "@/components/common/LoadMoreButton";
 import { EmptyState } from "@/components/common/EmptyState";
+import { TrailLoader } from "@/components/common/TrailLoader";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useReports, useAddReport, useDeleteReport } from "@/features/reports/hooks/useReports";
 import { formatRelativeTime } from "@/utils/format-date";
 import { canManageOwned } from "@/utils/can-manage-owned";
 
 /**
- * Displays a list of reports for a task, with optional add/delete actions.
- * 
- * - `mode="student"`: shows the add-report form and delete button for own reports.
- * - `mode="admin"`: shows reports and delete button for admin (can delete any).
- * 
+ * Task report log — append-only entries lift on hover like every other
+ * card list, loading uses the branded TrailLoader.
+ *
  * @param {Object} props
- * @param {string} props.taskId - The task ID these reports belong to.
- * @param {'student'|'admin'} [props.mode='student'] - Determines whether add form is shown.
+ * @param {string} props.taskId
+ * @param {'student'|'admin'} [props.mode='student']
  * @returns {JSX.Element}
  */
 export function ReportsSection({ taskId, mode = "student" }) {
@@ -34,22 +33,19 @@ export function ReportsSection({ taskId, mode = "student" }) {
         e.preventDefault();
         if (!body.trim()) return;
         addReport.mutate(
-            { 
-                title: title.trim(), 
-                body: body.trim() 
-            },
-            { 
-                onSuccess: () => { 
-                    setTitle("");
-                    setBody(""); 
-                } 
-            }
+            { title: title.trim(), body: body.trim() },
+            { onSuccess: () => { setTitle(""); setBody(""); } }
         );
     }
 
     return (
         <div className="space-y-3">
-            {isLoading && <p className="text-sm text-muted-foreground">Loading reports…</p>}
+            {isLoading && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <TrailLoader size="sm" />
+                    Loading reports…
+                </div>
+            )}
 
             {!isLoading && reports.length === 0 && (
                 <EmptyState
@@ -61,8 +57,12 @@ export function ReportsSection({ taskId, mode = "student" }) {
 
             {reports.length > 0 && (
                 <ul className="space-y-2">
-                    {reports.map((report) => (
-                        <li key={report.id} className="rounded-md border p-3 text-sm">
+                    {reports.map((report, i) => (
+                        <li
+                            key={report.id}
+                            style={{ animationDelay: `${i * 40}ms` }}
+                            className="rounded-md border border-border/60 bg-card p-3 text-sm shadow-[var(--shadow-sm)] transition-all duration-base ease-trail duration-base animate-in fade-in slide-in-from-bottom-1 fill-mode-both hover:shadow-[var(--shadow-md)]"
+                        >
                             <div className="flex items-start justify-between gap-2">
                                 <div className="min-w-0">
                                     {report.title && <p className="font-medium">{report.title}</p>}
@@ -72,7 +72,7 @@ export function ReportsSection({ taskId, mode = "student" }) {
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-6 w-6 shrink-0"
+                                        className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
                                         onClick={() => deleteReport.mutate(report.id)}
                                         aria-label="Delete report"
                                     >
@@ -80,7 +80,7 @@ export function ReportsSection({ taskId, mode = "student" }) {
                                     </Button>
                                 )}
                             </div>
-                            <p className="mt-1 text-xs text-muted-foreground">{formatRelativeTime(report.createdAt)}</p>
+                            <p className="mt-1 font-mono text-xs text-muted-foreground">{formatRelativeTime(report.createdAt)}</p>
                         </li>
                     ))}
                 </ul>
@@ -89,14 +89,9 @@ export function ReportsSection({ taskId, mode = "student" }) {
             <LoadMoreButton onClick={fetchNextPage} isLoading={isFetchingNextPage} hasMore={!!hasNextPage} />
 
             {mode === "student" && (
-                <form onSubmit={handleSubmit} className="space-y-2 rounded-md border p-3">
+                <form onSubmit={handleSubmit} className="space-y-2 rounded-md border border-border/60 bg-card p-3">
                     <Input placeholder="Title (optional)" value={title} onChange={(e) => setTitle(e.target.value)} />
-                    <Textarea
-                        rows={3}
-                        placeholder="What did you work on?"
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                    />
+                    <Textarea rows={3} placeholder="What did you work on?" value={body} onChange={(e) => setBody(e.target.value)} />
                     <Button type="submit" size="sm" disabled={addReport.isPending}>
                         {addReport.isPending ? "Adding…" : "Add report"}
                     </Button>

@@ -10,17 +10,12 @@ import { useAssignments } from "@/features/assignments/hooks/useAssignments";
 import { ROUTES } from "@/constants/routes";
 import { formatRelativeTime } from "@/utils/format-date";
 
-const CONTEXT_LABEL = {
-    task: "Task",
-    assignment: "Assignment",
-    progress: "Progress",
-    admin_feedback: "Feedback",
-};
+const CONTEXT_LABEL = { task: "Task", assignment: "Assignment", progress: "Progress", admin_feedback: "Feedback" };
 
 /**
- * Admin page displaying all notes across tasks and assignments, newest first.
- * Links back to the entity each note belongs to.
- * 
+ * Every note across the app, newest first — rows lift on hover and
+ * stagger in on load, matching every other list page.
+ *
  * @returns {JSX.Element}
  */
 export default function AdminNotesPage() {
@@ -33,8 +28,8 @@ export default function AdminNotesPage() {
 
     return (
         <div className="space-y-4">
-            <div>
-                <h1 className="text-2xl font-semibold">Notes</h1>
+            <div className="duration-slow animate-in fade-in slide-in-from-bottom-1">
+                <h1 className="text-2xl font-semibold tracking-tight">Notes</h1>
                 <p className="text-muted-foreground">Every note left on a task or assignment, newest first.</p>
             </div>
 
@@ -52,7 +47,7 @@ export default function AdminNotesPage() {
 
             {!isLoading && notes.length > 0 && (
                 <div className="space-y-2">
-                    {notes.map((note) => {
+                    {notes.map((note, i) => {
                         const entity = note.contextType === "task" ? tasksById[note.contextId] : assignmentsById[note.contextId];
                         const href =
                             note.contextType === "task"
@@ -62,16 +57,20 @@ export default function AdminNotesPage() {
                                     : null;
 
                         return (
-                            <div key={note.id} className="rounded-lg border bg-card p-3">
+                            <div
+                                key={note.id}
+                                style={{ animationDelay: `${Math.min(i, 10) * 30}ms` }}
+                                className="rounded-lg border border-border/60 bg-card p-3 shadow-[var(--shadow-sm)] transition-all duration-base ease-trail duration-base animate-in fade-in slide-in-from-bottom-1 fill-mode-both hover:shadow-[var(--shadow-md)]"
+                            >
                                 <div className="flex items-center justify-between gap-2">
                                     {href ? (
-                                        <Link to={href} className="text-sm font-medium hover:underline">
+                                        <Link to={href} className="text-sm font-medium text-primary hover:underline">
                                             {entity?.title ?? CONTEXT_LABEL[note.contextType]}
                                         </Link>
                                     ) : (
                                         <span className="text-sm font-medium">{CONTEXT_LABEL[note.contextType]}</span>
                                     )}
-                                    <span className="shrink-0 text-xs text-muted-foreground">{formatRelativeTime(note.createdAt)}</span>
+                                    <span className="shrink-0 font-mono text-xs text-muted-foreground">{formatRelativeTime(note.createdAt)}</span>
                                 </div>
                                 <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">{note.body}</p>
                             </div>

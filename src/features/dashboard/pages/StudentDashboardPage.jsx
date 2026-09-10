@@ -13,8 +13,9 @@ import { TASK_STATUS } from "@/constants/statuses";
 import { ROUTES } from "@/constants/routes";
 
 /**
- * Student dashboard showing overall progress, current/next tasks, stats, and recent activity.
- * 
+ * Student dashboard — same choreography standard as the admin one:
+ * staggered stat grid, hover-lift task cards, glow progress bar.
+ *
  * @returns {JSX.Element}
  */
 export default function StudentDashboardPage() {
@@ -46,36 +47,46 @@ export default function StudentDashboardPage() {
     const overallProgress = calculateOverallProgress(tasks, progress);
     const streak = calculateStreak(activity);
 
+    const stats = [
+        { key: "completed", label: "Completed", value: counts.completed, tone: "primary" },
+        { key: "inProgress", label: "In progress", value: counts.inProgress, tone: "secondary" },
+        { key: "remaining", label: "Remaining", value: counts.remaining, tone: "secondary" },
+        { key: "streak", label: "Streak", value: streak, tone: "accent" },
+    ];
+
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-semibold">Welcome back</h1>
+            <div className="duration-slow animate-in fade-in slide-in-from-bottom-1">
+                <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
                 <p className="text-muted-foreground">Here's where things stand.</p>
             </div>
 
-            <div className="space-y-2 rounded-lg border bg-card p-4">
+            <div className="space-y-2 rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)] duration-base animate-in fade-in slide-in-from-bottom-1">
                 <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Overall progress</span>
-                    <span className="text-sm text-muted-foreground">{overallProgress}%</span>
+                    <span className="font-mono text-sm font-semibold text-primary">{overallProgress}%</span>
                 </div>
-                <Progress value={overallProgress} />
+                <Progress value={overallProgress} className="h-2.5" />
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-lg border bg-card p-4">
+                <div className="rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)] transition-all duration-base ease-trail duration-base animate-in fade-in slide-in-from-bottom-1 hover:-translate-y-px hover:shadow-[var(--shadow-md)]">
                     <p className="text-sm text-muted-foreground">Current task</p>
                     {currentTask ? (
-                        <Link to={ROUTES.STUDENT_TASK_DETAILS(currentTask.id)} className="mt-1 block font-medium hover:underline">
+                        <Link to={ROUTES.STUDENT_TASK_DETAILS(currentTask.id)} className="mt-1 block font-medium text-primary hover:underline">
                             {currentTask.title}
                         </Link>
                     ) : (
                         <p className="mt-1 text-sm text-muted-foreground">Nothing in progress right now.</p>
                     )}
                 </div>
-                <div className="rounded-lg border bg-card p-4">
+                <div
+                    style={{ animationDelay: "60ms" }}
+                    className="rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)] transition-all duration-base ease-trail duration-base animate-in fade-in slide-in-from-bottom-1 fill-mode-both hover:-translate-y-px hover:shadow-[var(--shadow-md)]"
+                >
                     <p className="text-sm text-muted-foreground">Next up</p>
                     {nextTask ? (
-                        <Link to={ROUTES.STUDENT_TASK_DETAILS(nextTask.id)} className="mt-1 block font-medium hover:underline">
+                        <Link to={ROUTES.STUDENT_TASK_DETAILS(nextTask.id)} className="mt-1 block font-medium text-primary hover:underline">
                             {nextTask.title}
                         </Link>
                     ) : (
@@ -85,13 +96,18 @@ export default function StudentDashboardPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <StatCard label="Completed" value={counts.completed} />
-                <StatCard label="In progress" value={counts.inProgress} />
-                <StatCard label="Remaining" value={counts.remaining} />
-                <StatCard label="Streak" value={`${streak}d`} />
+                {stats.map((stat, i) => (
+                    <div
+                        key={stat.key}
+                        className="duration-slow animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+                        style={{ animationDelay: `${i * 60}ms` }}
+                    >
+                        <StatCard label={stat.label} value={stat.value} tone={stat.tone} />
+                    </div>
+                ))}
             </div>
 
-            <section className="space-y-3 rounded-lg border p-4">
+            <section className="space-y-3 rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)]">
                 <h2 className="font-medium">Recent activity</h2>
                 <ActivityTimeline tasksById={tasksById} assignmentsById={assignmentsById} pageSize={5} />
             </section>

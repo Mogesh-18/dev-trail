@@ -5,12 +5,14 @@ import { AssignmentService } from "@/features/assignments/services/assignment.se
 import { useRemoveResource } from "@/features/assignments/hooks/useAssignments";
 
 /**
- * Displays a list of assignment resources with open/remove actions.
- * 
+ * Assignment resource list. Rows lift on hover, icon buttons get a
+ * press-scale, download action shows a brief spinning state instead
+ * of just disabling silently.
+ *
  * @param {Object} props
- * @param {string|number} props.assignmentId - Assignment ID.
- * @param {Array} props.resources - Resources to display.
- * @param {boolean} [props.canManage=true] - Whether to show remove buttons.
+ * @param {string|number} props.assignmentId
+ * @param {Array} props.resources
+ * @param {boolean} [props.canManage=true]
  * @returns {JSX.Element}
  */
 export function ResourceList({ assignmentId, resources, canManage = true }) {
@@ -37,13 +39,15 @@ export function ResourceList({ assignmentId, resources, canManage = true }) {
 
     return (
         <ul className="space-y-2">
-            {resources.map((resource) => (
-                <li key={resource.id} className="flex items-center gap-3 rounded-md border p-2.5">
-                    {resource.type === "link" ? (
-                        <LinkIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    ) : (
-                        <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    )}
+            {resources.map((resource, i) => (
+                <li
+                    key={resource.id}
+                    style={{ animationDelay: `${i * 40}ms` }}
+                    className="flex items-center gap-3 rounded-md border border-border/60 p-2.5 transition-all duration-base ease-trail duration-base animate-in fade-in slide-in-from-bottom-1 fill-mode-both hover:border-primary/30 hover:shadow-[var(--shadow-sm)]"
+                >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                        {resource.type === "link" ? <LinkIcon className="h-3.5 w-3.5" /> : <FileText className="h-3.5 w-3.5" />}
+                    </span>
                     <span className="min-w-0 flex-1 truncate text-sm">{resource.label || resource.url}</span>
                     <Button
                         variant="ghost"
@@ -51,6 +55,7 @@ export function ResourceList({ assignmentId, resources, canManage = true }) {
                         onClick={() => handleOpen(resource)}
                         disabled={openingId === resource.id}
                         aria-label="Open resource"
+                        className={openingId === resource.id ? "animate-pulse" : ""}
                     >
                         <Download className="h-4 w-4" />
                     </Button>
@@ -60,6 +65,7 @@ export function ResourceList({ assignmentId, resources, canManage = true }) {
                             size="icon"
                             onClick={() => removeResource.mutate(resource)}
                             aria-label="Remove resource"
+                            className="text-muted-foreground hover:text-destructive"
                         >
                             <Trash2 className="h-4 w-4" />
                         </Button>

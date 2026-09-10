@@ -40,16 +40,21 @@ const DEFAULT_VALUES = {
 };
 
 /**
- * Responsive dialog (desktop: dialog, mobile: sheet) for creating/editing a task.
- * 
+ * Create/edit task dialog. Prerequisite checkboxes highlight on check
+ * (matching AssignmentFormDialog's linked-task list), "Save as
+ * template" gets a subtler treatment (ghost, no shadow) since it's a
+ * secondary action next to Save.
+ *
  * @param {Object} props
- * @param {boolean} props.open - Controls dialog visibility.
- * @param {(open: boolean) => void} props.onOpenChange - Callback for open state changes.
- * @param {Object|null} props.task - Existing task (null for create).
- * @param {Array} props.otherTasks - List of tasks that can be selected as prerequisites (excluding the current one).
- * @param {Array} props.dependencies - Existing dependency relationships.
- * @param {(values: Object) => void} props.onSubmit - Submit handler.
- * @param {boolean} props.isPending - Whether the submit action is in progress.
+ * @param {boolean} props.open
+ * @param {(open: boolean) => void} props.onOpenChange
+ * @param {Object|null} props.task
+ * @param {Object|null} [props.prefillFrom]
+ * @param {'duplicate'|'template'} [props.prefillKind='duplicate']
+ * @param {Array} props.otherTasks
+ * @param {Array} props.dependencies
+ * @param {(values: Object) => void} props.onSubmit
+ * @param {boolean} props.isPending
  * @returns {JSX.Element}
  */
 export function TaskFormDialog({ open, onOpenChange, task, prefillFrom, prefillKind = "duplicate", otherTasks, dependencies, onSubmit, isPending }) {
@@ -102,7 +107,7 @@ export function TaskFormDialog({ open, onOpenChange, task, prefillFrom, prefillK
             openedUpdatedAtRef.current = null;
             reset(DEFAULT_VALUES);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: see doc comment above
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: only re-init on open
     }, [open]);
 
     function handleSaveAsTemplate() {
@@ -135,12 +140,7 @@ export function TaskFormDialog({ open, onOpenChange, task, prefillFrom, prefillK
 
     return (
         <>
-            <ResponsiveDialog
-                open={open}
-                onOpenChange={onOpenChange}
-                title={task ? "Edit task" : "Create task"}
-                contentClassName="sm:max-w-lg"
-            >
+            <ResponsiveDialog open={open} onOpenChange={onOpenChange} title={task ? "Edit task" : "Create task"} contentClassName="sm:max-w-lg">
                 <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
                     <div className="space-y-1.5">
                         <Label htmlFor="title">Title</Label>
@@ -196,20 +196,24 @@ export function TaskFormDialog({ open, onOpenChange, task, prefillFrom, prefillK
                                 control={control}
                                 name="prerequisiteTaskIds"
                                 render={({ field }) => (
-                                    <div className="max-h-32 space-y-2 overflow-y-auto rounded-md border p-2">
-                                        {otherTasks.map((t) => (
-                                            <label key={t.id} className="flex items-center gap-2 text-sm">
-                                                <Checkbox
-                                                    checked={field.value.includes(t.id)}
-                                                    onCheckedChange={(checked) => {
-                                                        field.onChange(
-                                                            checked ? [...field.value, t.id] : field.value.filter((id) => id !== t.id)
-                                                        );
-                                                    }}
-                                                />
-                                                {t.title}
-                                            </label>
-                                        ))}
+                                    <div className="max-h-32 space-y-1 overflow-y-auto rounded-md border border-border/60 p-2">
+                                        {otherTasks.map((t) => {
+                                            const checked = field.value.includes(t.id);
+                                            return (
+                                                <label
+                                                    key={t.id}
+                                                    className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors duration-fast ${checked ? "bg-primary/10" : "hover:bg-muted"}`}
+                                                >
+                                                    <Checkbox
+                                                        checked={checked}
+                                                        onCheckedChange={(c) => {
+                                                            field.onChange(c ? [...field.value, t.id] : field.value.filter((id) => id !== t.id));
+                                                        }}
+                                                    />
+                                                    {t.title}
+                                                </label>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             />

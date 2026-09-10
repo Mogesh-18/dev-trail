@@ -1,4 +1,4 @@
-import { ListTodo } from "lucide-react";
+import { ListTodo, Lock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -8,6 +8,7 @@ import { StudentTaskCard } from "@/features/tasks/components/StudentTaskCard";
 import { useTasks, useTaskDependencies } from "@/features/tasks/hooks/useTasks";
 import { useProgress } from "@/features/progress/hooks/useProgress";
 import { groupTasksByTab } from "@/features/tasks/utils/group-tasks-by-tab";
+import { getBlockingReasons } from "@/features/tasks/utils/get-blocking-reasons";
 import { useRenderWindow } from "@/hooks/use-render-window";
 
 /**
@@ -16,8 +17,10 @@ import { useRenderWindow } from "@/hooks/use-render-window";
 const PAGE_SIZE = 10;
 
 /**
- * Student task list grouped into tabs: In Progress, Completed, Upcoming.
- * 
+ * Student task list. Blocked-task rows get the same floating-lock
+ * treatment as other "waiting" states in the app (StudentTaskDetailsPage's
+ * locked banner) instead of a differently-styled dashed box.
+ *
  * @returns {JSX.Element}
  */
 export default function StudentTasksPage() {
@@ -48,17 +51,15 @@ export default function StudentTasksPage() {
     }
 
     if (isError) {
-        return (
-            <ErrorState description="Couldn't load your tasks. Check your connection and try again." onRetry={refetchTasks} />
-        );
+        return <ErrorState description="Couldn't load your tasks. Check your connection and try again." onRetry={refetchTasks} />;
     }
 
     const progressByTaskId = Object.fromEntries(progress.map((p) => [p.taskId, p]));
 
     return (
         <div className="space-y-4">
-            <div>
-                <h1 className="text-2xl font-semibold">Your tasks</h1>
+            <div className="duration-slow animate-in fade-in slide-in-from-bottom-1">
+                <h1 className="text-2xl font-semibold tracking-tight">Your tasks</h1>
                 <p className="text-muted-foreground">Work through them in order.</p>
             </div>
 
@@ -116,8 +117,13 @@ export default function StudentTasksPage() {
                                     {blockedWindow.visibleItems.map((task) => {
                                         const reasons = getBlockingReasons(task, dependencies, tasks ?? [], progressByTaskId);
                                         return (
-                                            <div key={task.id} className="flex items-start gap-3 rounded-lg border border-dashed p-3 opacity-80">
-                                                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                                            <div
+                                                key={task.id}
+                                                className="flex items-start gap-3 rounded-lg border border-status-locked/30 bg-status-locked/5 p-3 opacity-80 transition-opacity duration-base hover:opacity-100"
+                                            >
+                                                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-status-locked/15 text-status-locked">
+                                                    <Lock className="h-4 w-4" />
+                                                </span>
                                                 <div className="min-w-0">
                                                     <p className="truncate font-medium">{task.title}</p>
                                                     <p className="text-sm text-muted-foreground">

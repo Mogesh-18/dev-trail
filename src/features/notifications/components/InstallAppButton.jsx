@@ -17,11 +17,12 @@ const isIos = () => /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 const isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
 
 /**
- * Button that triggers the browser's PWA install prompt (or shows an iOS tip).
- * 
+ * PWA install trigger — iOS tip now animates in instead of appearing
+ * instantly, matching every other inline reveal in the app.
+ *
  * @param {Object} props
- * @param {string} [props.className] - Additional CSS classes.
- * @returns {JSX.Element|null} Null if app is already installed or dismissed.
+ * @param {string} [props.className]
+ * @returns {JSX.Element|null}
  */
 export function InstallAppButton({ className }) {
     const [installPrompt, setInstallPrompt] = useState(null);
@@ -30,7 +31,6 @@ export function InstallAppButton({ className }) {
 
     useEffect(() => {
         if (isStandalone()) return undefined;
-
         function handleBeforeInstallPrompt(e) {
             e.preventDefault();
             setInstallPrompt(e);
@@ -60,7 +60,7 @@ export function InstallAppButton({ className }) {
                 Install app
             </Button>
             {showIosTip && (
-                <p className="mt-1.5 text-xs text-muted-foreground">
+                <p className="mt-1.5 text-xs text-muted-foreground duration-base animate-in fade-in slide-in-from-top-1">
                     Tap the Share icon, then "Add to Home Screen."
                 </p>
             )}
