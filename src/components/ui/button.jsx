@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
  * interactive element in the app, so its feel sets the tone for
  * everything else. Focus ring uses the glow token, not a flat outline.
  */
-const buttonVariants = cva(
+export const buttonVariants = cva(
     "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-fast ease-spring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97]",
     {
         variants: {
