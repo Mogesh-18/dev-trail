@@ -75,6 +75,10 @@ export default {
                     "0%, 100%": { boxShadow: "0 0 0 0 hsl(var(--primary) / 0.35)" },
                     "50%": { boxShadow: "0 0 0 5px hsl(var(--primary) / 0)" },
                 },
+                "gradient-x": {
+                    "0%, 100%": { backgroundPosition: "0% 50%" },
+                    "50%": { backgroundPosition: "100% 50%" },
+                },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
@@ -83,6 +87,7 @@ export default {
                 shimmer: "shimmer 1.6s ease-in-out infinite",
                 float: "float 3s ease-in-out infinite",
                 "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+                "gradient-x": "gradient-x 3s ease infinite",
             },
             fontFamily: {
                 sans: ["General Sans", "ui-sans-serif", "system-ui", "sans-serif"],

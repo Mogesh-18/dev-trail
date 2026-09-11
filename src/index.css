@@ -3,117 +3,108 @@
 @tailwind utilities;
 
 /*
-  DevTrail theme — "trail map" identity, vivid palette.
-
-  Every neutral is warmth-tinted (never true gray) and every semantic
-  color sits in a vivid, mid-range saturation/lightness band — no pale
-  washed-out tones, no muddy darks. HSL triplets (no hsl() wrapper) per
-  shadcn convention so pasted-in components still work.
+  DevTrail theme v2 — vibrant indigo/blue/violet, bright white base.
+  Green is gone entirely, including from "completed" (now a vivid
+  cyan-blue rather than green, so it still reads as "done" without
+  pulling the palette back toward the color you asked to drop).
 */
 
 @layer base {
     :root {
-        --background: 45 32% 95%;
-        /* warm vivid paper */
-        --foreground: 152 30% 11%;
-        /* deep vivid pine-black ink */
+        --background: 0 0% 100%;
+        /* pure white */
+        --foreground: 240 25% 14%;
+        /* deep indigo-black ink */
 
-        --card: 45 36% 98%;
-        --card-foreground: 152 30% 11%;
+        --card: 240 60% 99%;
+        /* barely-tinted white, distinguishes from bg */
+        --card-foreground: 240 25% 14%;
 
-        --popover: 45 36% 98%;
-        --popover-foreground: 152 30% 11%;
+        --popover: 240 60% 99%;
+        --popover-foreground: 240 25% 14%;
 
-        /* Pine — primary, also the "completed" trail state */
-        --primary: 152 62% 30%;
-        --primary-foreground: 45 36% 98%;
+        --primary: 243 82% 62%;
+        /* vibrant indigo */
+        --primary-foreground: 0 0% 100%;
 
-        /* Sky — secondary, links, the "available" trail state */
-        --secondary: 205 72% 44%;
-        --secondary-foreground: 45 36% 98%;
+        --secondary: 217 85% 58%;
+        /* vibrant blue */
+        --secondary-foreground: 0 0% 100%;
 
-        /* Rust — the one deliberate accent. Spend it sparingly. */
-        --accent: 20 82% 50%;
-        --accent-foreground: 45 36% 98%;
+        --accent: 271 76% 62%;
+        /* vibrant violet — the one bold accent */
+        --accent-foreground: 0 0% 100%;
 
-        --muted: 95 16% 90%;
-        /* warm sage, not gray */
-        --muted-foreground: 152 18% 32%;
+        --muted: 240 40% 96%;
+        --muted-foreground: 240 12% 42%;
 
-        --destructive: 5 75% 48%;
-        --destructive-foreground: 45 36% 98%;
+        --destructive: 5 75% 52%;
+        --destructive-foreground: 0 0% 100%;
 
-        --border: 45 22% 80%;
-        /* warm tan, not gray */
-        --input: 45 22% 80%;
-        --ring: 152 62% 30%;
+        --border: 240 24% 90%;
+        --input: 240 24% 90%;
+        --ring: 243 82% 62%;
 
-        /* Trail states */
-        --status-locked: 250 14% 56%;
-        /* dim by design: inactive checkpoint */
-        --status-available: 205 78% 52%;
-        --status-progress: 38 92% 52%;
-        --status-completed: 150 65% 36%;
-        --status-skipped: 20 10% 54%;
-        /* dim by design: bypassed checkpoint */
+        --status-locked: 245 10% 62%;
+        --status-available: 199 88% 58%;
+        --status-progress: 38 92% 55%;
+        --status-completed: 190 70% 42%;
+        /* cyan-blue, not green */
+        --status-skipped: 250 8% 56%;
 
         --radius: 0.75rem;
 
-        --ease-trail: cubic-bezier(0.16, 1, 0.3, 1);
-        --duration-fast: 120ms;
-        --duration-base: 220ms;
-        --duration-slow: 380ms;
-
-        /* Tinted elevation — shadows carry the brand hue instead of flat black, which is most of what separates "flat SaaS" from "premium." */
-        --shadow-color: 152 40% 15%;
+        --shadow-color: 243 60% 30%;
+        /* indigo-tinted shadows, not pine */
         --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.06);
-        --shadow-md: 0 6px 16px -4px hsl(var(--shadow-color) / 0.14), 0 2px 6px -2px hsl(var(--shadow-color) / 0.08);
-        --shadow-lg: 0 16px 40px -12px hsl(var(--shadow-color) / 0.22), 0 4px 12px -4px hsl(var(--shadow-color) / 0.12);
+        --shadow-md: 0 6px 16px -4px hsl(var(--shadow-color) / 0.12), 0 2px 6px -2px hsl(var(--shadow-color) / 0.07);
+        --shadow-lg: 0 16px 40px -12px hsl(var(--shadow-color) / 0.18), 0 4px 12px -4px hsl(var(--shadow-color) / 0.1);
         --shadow-glow-primary: 0 0 0 1px hsl(var(--primary) / 0.16), 0 10px 28px -10px hsl(var(--primary) / 0.4);
         --shadow-glow-accent: 0 0 0 1px hsl(var(--accent) / 0.18), 0 10px 28px -10px hsl(var(--accent) / 0.4);
 
-        /* A springier curve for things that should feel pressed/released (buttons, dialog entrance), distinct from --ease-trail's calmer glide used for page-level motion. */
+        --ease-trail: cubic-bezier(0.16, 1, 0.3, 1);
         --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --duration-fast: 120ms;
+        --duration-base: 220ms;
+        --duration-slow: 380ms;
     }
 
     .dark {
-        --background: 152 30% 7%;
-        /* deep vivid night trail */
-        --foreground: 45 28% 94%;
+        --background: 243 30% 7%;
+        --foreground: 240 20% 94%;
 
-        --card: 152 26% 10%;
-        --card-foreground: 45 28% 94%;
+        --card: 243 26% 10%;
+        --card-foreground: 240 20% 94%;
 
-        --popover: 152 26% 10%;
-        --popover-foreground: 45 28% 94%;
+        --popover: 243 26% 10%;
+        --popover-foreground: 240 20% 94%;
 
-        --primary: 150 58% 55%;
-        --primary-foreground: 152 30% 7%;
+        --primary: 243 85% 70%;
+        --primary-foreground: 243 30% 7%;
 
-        --secondary: 205 70% 62%;
-        --secondary-foreground: 152 30% 7%;
+        --secondary: 217 82% 65%;
+        --secondary-foreground: 243 30% 7%;
 
-        --accent: 20 78% 58%;
-        --accent-foreground: 152 30% 7%;
+        --accent: 271 78% 70%;
+        --accent-foreground: 243 30% 7%;
 
-        --muted: 100 14% 16%;
-        /* warm dark sage, not gray */
-        --muted-foreground: 45 14% 68%;
+        --muted: 243 18% 16%;
+        --muted-foreground: 240 10% 68%;
 
-        --destructive: 5 70% 55%;
-        --destructive-foreground: 45 28% 94%;
+        --destructive: 5 68% 56%;
+        --destructive-foreground: 240 20% 94%;
 
-        --border: 90 14% 20%;
-        --input: 90 14% 20%;
-        --ring: 150 58% 55%;
+        --border: 243 16% 20%;
+        --input: 243 16% 20%;
+        --ring: 243 85% 70%;
 
-        --status-locked: 250 12% 46%;
-        --status-available: 205 72% 62%;
-        --status-progress: 38 82% 60%;
-        --status-completed: 150 58% 55%;
-        --status-skipped: 20 8% 44%;
+        --status-locked: 245 8% 48%;
+        --status-available: 199 80% 66%;
+        --status-progress: 38 82% 62%;
+        --status-completed: 190 65% 55%;
+        --status-skipped: 250 6% 46%;
 
-        --shadow-color: 152 60% 2%;
+        --shadow-color: 243 70% 2%;
         --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.4);
         --shadow-md: 0 6px 16px -4px hsl(var(--shadow-color) / 0.5), 0 2px 6px -2px hsl(var(--shadow-color) / 0.3);
         --shadow-lg: 0 16px 40px -12px hsl(var(--shadow-color) / 0.6), 0 4px 12px -4px hsl(var(--shadow-color) / 0.4);
@@ -123,6 +114,17 @@
 @layer base {
     * {
         @apply border-border;
+    }
+
+    /* Clamps the horizontal-scroll bug caused by transform-based entrance
+       animations (animate-in slide-in-from-*) — transforms can expand a
+       browser's scrollable area on mobile even without changing layout.
+       This is the one place to fix it app-wide instead of per page. */
+    html,
+    body,
+    #root {
+        overflow-x: hidden;
+        width: 100%;
     }
 
     body {
@@ -138,7 +140,6 @@ html {
     color-scheme: light dark;
 }
 
-/* Custom scrollbar — a small detail default browser chrome always gives away */
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
