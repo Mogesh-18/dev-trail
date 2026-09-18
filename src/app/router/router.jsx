@@ -8,7 +8,7 @@ import { studentLayoutRoute } from "@/app/router/routes/student/student.layout";
 
 import {
     adminDashboardRoute, adminTasksRoute, adminTaskDetailsRoute, adminAssignmentsRoute, adminAssignmentDetailsRoute, adminProgressRoute,
-    adminNotesRoute, adminUsersRoute, adminTimelineRoute
+    adminNotesRoute, adminUsersRoute, adminTimelineRoute, adminCalendarRoute,
 } from "@/app/router/routes/admin/admin.routes";
 import {
     studentDashboardRoute, studentTasksRoute, studentTaskDetailsRoute, studentAssignmentsRoute, studentAssignmentDetailsRoute,
@@ -38,6 +38,7 @@ const routeTree = rootRoute.addChildren([
         adminNotesRoute,
         adminUsersRoute,
         adminTimelineRoute,
+        adminCalendarRoute,
     ]),
     studentLayoutRoute.addChildren([
         studentDashboardRoute,

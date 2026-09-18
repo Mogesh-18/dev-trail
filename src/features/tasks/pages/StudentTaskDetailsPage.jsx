@@ -9,16 +9,16 @@ import { useAssignments, useAssignmentTaskLinks } from "@/features/assignments/h
 import { useProgress, useStartTask, useCompleteTask, useReopenTask } from "@/features/progress/hooks/useProgress";
 import { deriveTaskStatus } from "@/features/tasks/services/task-availability.service";
 import { getBlockingReasons } from "@/features/tasks/utils/get-blocking-reasons";
-import { useTaskPresence } from "@/features/tasks/hooks/useTaskPresence";
 import { TASK_STATUS } from "@/constants/statuses";
 import { ROUTES } from "@/constants/routes";
 import { ReportsSection } from "@/features/reports/components/ReportsSection";
 
 /**
- * Student task detail. The "locked, waiting on X" banner is now a real
- * callout (icon badge, tinted background) instead of a dashed box, and
- * the presence indicator ("admin viewing now") pulses like a live dot
- * instead of sitting as flat text.
+ * Student task detail. The presence indicator ("your admin is viewing
+ * this task right now") is removed along with useTaskPresence — no
+ * realtime tracking of any kind remains in the app. This also removes
+ * the earlier conditional-hook-call issue, since there's no longer a
+ * hook to call after the early return at all.
  *
  * @returns {JSX.Element}
  */
@@ -46,11 +46,8 @@ export default function StudentTaskDetailsPage() {
     const task = (tasks ?? []).find((t) => t.id === taskId);
     if (!task) return <p className="text-muted-foreground">Task not found.</p>;
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks -- preserved from original: early-return above already guards on tasksLoading/task, matches upstream behavior
-    const otherPresent = useTaskPresence(task?.id);
     const progressByTaskId = Object.fromEntries(progress.map((p) => [p.taskId, p]));
     const status = deriveTaskStatus(task, dependencies, progressByTaskId);
-
     const linkedAssignments = assignments.filter((a) => taskLinks.some((l) => l.taskId === task.id && l.assignmentId === a.id));
     const prerequisiteTitles = getBlockingReasons(task, dependencies, tasks ?? [], progressByTaskId);
 
@@ -64,12 +61,6 @@ export default function StudentTaskDetailsPage() {
             <div className="flex items-center gap-2 duration-slow animate-in fade-in slide-in-from-bottom-1">
                 <h1 className="text-2xl font-semibold tracking-tight">{task.title}</h1>
                 <StatusBadge status={status} />
-                {otherPresent && (
-                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-status-available" />
-                        Your admin is viewing this task right now.
-                    </span>
-                )}
             </div>
 
             {status === TASK_STATUS.LOCKED && (

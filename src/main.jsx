@@ -4,7 +4,6 @@ import { QueryProvider } from "@/app/providers/QueryProvider";
 import { ThemeProvider } from "@/app/providers/ThemeProvider";
 import { AuthProvider } from "@/app/providers/AuthProvider";
 import { EventListenersProvider } from "@/app/providers/EventListenersProvider";
-import { RealtimeProvider } from "@/app/providers/RealtimeProvider";
 import { RouterRoot } from "@/app/router/RouterRoot";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { registerServiceWorker } from "@/lib/register-service-worker";
@@ -13,10 +12,11 @@ import "./index.css";
 registerServiceWorker();
 
 /**
- * The application entry point.
- * Wraps the entire app in error boundary, query client, theme, auth, and event listeners providers.
- * Renders the `RouterRoot` component into the DOM element with id `"root"`.
- * 
+ * App entry point. RealtimeProvider is removed entirely — no realtime
+ * tracking of any kind (data sync or presence) runs anywhere in the
+ * app now. EventListenersProvider stays: it's activity logging + push
+ * notifications, unrelated to Realtime.
+ *
  * @returns {void}
  */
 createRoot(document.getElementById("root")).render(
@@ -26,9 +26,7 @@ createRoot(document.getElementById("root")).render(
                 <ThemeProvider>
                     <AuthProvider>
                         <EventListenersProvider>
-                            <RealtimeProvider>
-                                <RouterRoot />
-                            </RealtimeProvider>
+                            <RouterRoot />
                         </EventListenersProvider>
                     </AuthProvider>
                 </ThemeProvider>

@@ -12,6 +12,8 @@
  *   ADMIN_ASSIGNMENTS: string,
  *   ADMIN_ASSIGNMENT_DETAILS: (assignmentId: string|number) => string,
  *   ADMIN_PROGRESS: string,
+ *   ADMIN_TIMELINE: string,
+ *   ADMIN_CALENDAR: string,
  *   ADMIN_USERS: string,
  *   ADMIN_NOTES: string,
  *   STUDENT_DASHBOARD: string,
@@ -32,6 +34,8 @@ export const ROUTES = {
     ADMIN_ASSIGNMENTS: "/admin/assignments",
     ADMIN_ASSIGNMENT_DETAILS: (assignmentId) => `/admin/assignments/${assignmentId}`,
     ADMIN_PROGRESS: "/admin/progress",
+    ADMIN_TIMELINE: "/admin/timeline",
+    ADMIN_CALENDAR: "/admin/calendar",
     ADMIN_USERS: "/admin/users",
     ADMIN_NOTES: "/admin/notes",
 

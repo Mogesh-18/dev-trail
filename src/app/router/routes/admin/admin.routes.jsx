@@ -9,6 +9,7 @@ import AdminProgressPage from "@/features/progress/pages/AdminProgressPage";
 import AdminNotesPage from "@/features/notes/pages/AdminNotesPage";
 import AdminTimelinePage from "@/features/progress/pages/AdminTimelinePage";
 import UsersPage from "@/features/users/pages/UsersPage";
+import AdminCalendarPage from "@/features/progress/pages/AdminCalendarPage";
 
 /**
  * Admin dashboard route.
@@ -107,4 +108,15 @@ export const adminTimelineRoute = createRoute({
     getParentRoute: () => adminLayoutRoute,
     path: "timeline",
     component: AdminTimelinePage,
+});
+
+/**
+ * Admin calendar route — pick a date, see that day's activity.
+ * 
+ * @type {Route}
+ */
+export const adminCalendarRoute = createRoute({
+    getParentRoute: () => adminLayoutRoute,
+    path: "calendar",
+    component: AdminCalendarPage,
 });

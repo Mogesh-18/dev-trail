@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, ClipboardList } from "lucide-react";
+import { Plus, ClipboardList, Eye } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import { LoadMoreButton } from "@/components/common/LoadMoreButton";
 import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog";
 import { AssignmentFormDialog } from "@/features/assignments/components/AssignmentFormDialog";
+import { AssignmentQuickViewDialog } from "@/features/assignments/components/AssignmentQuickViewDialog";
 import {
     useAssignmentsPaginated, useAssignmentTaskLinks, useCreateAssignment, useDeleteAssignment,
 } from "@/features/assignments/hooks/useAssignments";
@@ -16,9 +17,9 @@ import { ROUTES } from "@/constants/routes";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 
 /**
- * Admin assignments list. Rows now lift and gain shadow on hover
- * (the row itself is the click target's visual anchor even though the
- * title is the link), and entrances stagger in on load.
+ * Admin assignments list. Each row now opens AssignmentQuickViewDialog
+ * (resources + submissions) via an eye button, instead of resource/
+ * submission management living only on the detail page.
  *
  * @returns {JSX.Element}
  */
@@ -31,6 +32,7 @@ export default function AdminAssignmentsPage() {
 
     const [formOpen, setFormOpen] = useState(false);
     const [deletingAssignment, setDeletingAssignment] = useState(null);
+    const [viewingAssignment, setViewingAssignment] = useState(null);
 
     function handleSubmit(values) {
         createAssignment.mutateAsync(values).then(() => setFormOpen(false));
@@ -90,6 +92,9 @@ export default function AdminAssignmentsPage() {
                                 </p>
                             </Link>
                             <StatusBadge status={assignment.status} />
+                            <Button variant="ghost" size="icon" onClick={() => setViewingAssignment(assignment)} aria-label="View assignment">
+                                <Eye className="h-4 w-4" />
+                            </Button>
                             <Button variant="ghost" size="sm" className="hover:text-destructive" onClick={() => setDeletingAssignment(assignment)}>
                                 Delete
                             </Button>
@@ -107,6 +112,13 @@ export default function AdminAssignmentsPage() {
                 taskLinks={taskLinks}
                 onSubmit={handleSubmit}
                 isPending={createAssignment.isPending}
+            />
+
+            <AssignmentQuickViewDialog
+                open={!!viewingAssignment}
+                onOpenChange={(open) => !open && setViewingAssignment(null)}
+                assignment={viewingAssignment}
+                mode="admin"
             />
 
             <ConfirmDeleteDialog

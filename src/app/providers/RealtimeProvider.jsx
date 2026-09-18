@@ -1,6 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { createContext, useContext } from "react";
 
 /**
  * React context providing the Realtime connection status.
@@ -12,48 +10,22 @@ const RealtimeContext = createContext({
 });
 
 /**
- * Provider that sets up a Supabase Realtime channel for tasks, progress, and assignments.
- * Invalidates the corresponding TanStack Query keys on any change.
- * 
+ * Realtime is disabled per explicit request — the live-invalidation
+ * behavior was causing distracting refetches. Context shape is kept
+ * identical (`{ connected: boolean }`) so every existing caller
+ * (Sidebar, Header, etc.) keeps working without changes; `connected`
+ * is now always `false`, and nothing subscribes to Supabase Realtime.
+ *
+ * To re-enable later: restore the postgres_changes subscription logic
+ * that lived here before (channel + queryClient.invalidateQueries per
+ * table), and flip this back to a real Provider component with state.
+ *
  * @param {Object} props
  * @param {React.ReactNode} props.children
  * @returns {JSX.Element}
  */
 export function RealtimeProvider({ children }) {
-    const queryClient = useQueryClient();
-    const [connected, setConnected] = useState(false);
-
-    useEffect(() => {
-        const channel = supabase
-            .channel("devtrail-sync")
-            .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, () => {
-                queryClient.invalidateQueries({ 
-                    queryKey: ["tasks"] 
-                });
-            })
-            .on("postgres_changes", { event: "*", schema: "public", table: "task_dependencies" }, () => {
-                queryClient.invalidateQueries({ 
-                    queryKey: ["task-dependencies"] 
-                });
-            })
-            .on("postgres_changes", { event: "*", schema: "public", table: "progress" }, () => {
-                queryClient.invalidateQueries({ 
-                    queryKey: ["progress"] 
-                });
-            })
-            .on("postgres_changes", { event: "*", schema: "public", table: "assignments" }, () => {
-                queryClient.invalidateQueries({ 
-                    queryKey: ["assignments"] 
-                });
-            })
-            .subscribe((status) => setConnected(status === "SUBSCRIBED"));
-
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }, [queryClient]);
-
-    return <RealtimeContext.Provider value={{ connected }}>{children}</RealtimeContext.Provider>;
+    return <RealtimeContext.Provider value={{ connected: false }}>{children}</RealtimeContext.Provider>;
 }
 
 /**

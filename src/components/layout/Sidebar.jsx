@@ -1,29 +1,24 @@
 import { Link } from "@tanstack/react-router";
-import { useRealtimeStatus } from "@/app/providers/RealtimeProvider";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { BrandMark } from "@/components/common/BrandMark";
 import { InstallAppButton } from "@/features/notifications/components/InstallAppButton";
 import { cn } from "@/lib/utils";
 
 /**
- * Desktop sidebar, premium pass: gradient logo tile instead of a bare
- * glyph, active nav items get a gradient-wash pill with a glowing left
- * accent bar instead of a flat tint, icons sit in a small chip that
- * fills with color when active, and the footer is a single account
- * chip (avatar + status dot + email) instead of a plain text row.
+ * Desktop sidebar. The live-sync status dot is removed — Realtime is
+ * disabled app-wide (see RealtimeProvider), so a permanently-"off"
+ * indicator would read as a bug rather than an intentional choice.
  *
  * @param {Object} props
  * @param {Array<{ label: string, to: string, icon: React.ComponentType }>} props.navItems
  * @returns {JSX.Element}
  */
 export function Sidebar({ navItems }) {
-    const { connected } = useRealtimeStatus();
     const { user } = useAuth();
     const initials = (user?.email?.[0] ?? "?").toUpperCase();
 
     return (
         <aside className="relative hidden w-64 shrink-0 flex-col overflow-hidden border-r border-border/60 bg-card md:flex">
-            {/* Soft ambient wash — barely-there, gives the panel depth without noise */}
             <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-primary/10 blur-3xl" />
             <div className="pointer-events-none absolute -right-20 bottom-24 h-56 w-56 rounded-full bg-accent/10 blur-3xl" />
 
@@ -31,15 +26,9 @@ export function Sidebar({ navItems }) {
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-[var(--shadow-glow-primary)]">
                     <BrandMark className="h-5 w-5 text-primary-foreground" />
                 </span>
-                <div className="min-w-0">
-                    <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-lg font-semibold leading-tight tracking-tight text-transparent">
-                        DevTrail
-                    </span>
-                    <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                        <span className={cn("h-1.5 w-1.5 rounded-full transition-colors duration-base", connected ? "animate-pulse-glow bg-status-completed" : "bg-status-locked")} />
-                        {connected ? "Live" : "Reconnecting…"}
-                    </span>
-                </div>
+                <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-lg font-semibold leading-tight tracking-tight text-transparent">
+                    DevTrail
+                </span>
             </div>
 
             <nav className="relative flex-1 space-y-1 px-3 pt-2">
@@ -74,9 +63,8 @@ export function Sidebar({ navItems }) {
             <div className="relative space-y-2 border-t border-border/60 px-3 py-3">
                 <InstallAppButton />
                 <div className="flex items-center gap-2.5 rounded-xl px-2 py-2 transition-colors duration-fast hover:bg-muted">
-                    <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary font-mono text-xs font-semibold text-primary-foreground shadow-[var(--shadow-sm)]">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary font-mono text-xs font-semibold text-primary-foreground shadow-[var(--shadow-sm)]">
                         {initials}
-                        <span className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-card", connected ? "bg-status-completed" : "bg-status-locked")} />
                     </span>
                     <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">{user?.email}</span>
                 </div>
