@@ -4,26 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { assignmentSchema } from "@/schemas/assignment.schema";
 import { ResponsiveDialog } from "@/components/common/ResponsiveDialog";
 import { StaleEditWarningDialog } from "@/components/common/StaleEditWarningDialog";
+import { RichTextEditor } from "@/components/common/RichTextEditor";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
-/**
- * Default form values for the assignment creation/editing form.
- * 
- * @type {{
- *   title: string,
- *   instructions: string,
- *   requirements: string,
- *   acceptanceCriteria: string,
- *   deadline: string,
- *   estimatedMinutes: string,
- *   taskIds: string[]
- * }}
- */
 const DEFAULT_VALUES = {
     title: "",
     instructions: "",
@@ -35,10 +22,10 @@ const DEFAULT_VALUES = {
 };
 
 /**
- * Create/edit assignment dialog. Linked-task checkboxes now highlight
- * on check instead of just toggling a checkbox with no surrounding
- * feedback, and the form fields all inherit the shared input focus
- * treatment (see input.jsx) rather than a flat default border.
+ * Create/edit assignment dialog. Instructions, Requirements, and
+ * Acceptance criteria now use RichTextEditor instead of a plain
+ * Textarea — admins can bold/italicize, add headings, bullet lists,
+ * quotes, and links. Stored value is sanitized HTML.
  *
  * @param {Object} props
  * @param {boolean} props.open
@@ -70,8 +57,7 @@ export function AssignmentFormDialog({ open, onOpenChange, assignment, allTasks,
         if (!open) return;
         if (assignment) {
             openedUpdatedAtRef.current = assignment.updatedAt ?? null;
-            const taskIds = taskLinks.filter((link) => link.assignmentId === assignment.id)
-                .map((link) => link.taskId);
+            const taskIds = taskLinks.filter((link) => link.assignmentId === assignment.id).map((link) => link.taskId);
             reset({
                 title: assignment.title,
                 instructions: assignment.instructions ?? "",
@@ -111,7 +97,7 @@ export function AssignmentFormDialog({ open, onOpenChange, assignment, allTasks,
                 open={open}
                 onOpenChange={onOpenChange}
                 title={assignment ? "Edit assignment" : "Create assignment"}
-                contentClassName="sm:max-w-lg"
+                contentClassName="sm:max-w-xl"
             >
                 <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
                     <div className="space-y-1.5">
@@ -121,18 +107,36 @@ export function AssignmentFormDialog({ open, onOpenChange, assignment, allTasks,
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="instructions">Instructions</Label>
-                        <Textarea id="instructions" rows={3} {...register("instructions")} />
+                        <Label>Instructions</Label>
+                        <Controller
+                            control={control}
+                            name="instructions"
+                            render={({ field }) => (
+                                <RichTextEditor value={field.value} onChange={field.onChange} placeholder="What should the student do?" />
+                            )}
+                        />
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="requirements">Requirements</Label>
-                        <Textarea id="requirements" rows={2} {...register("requirements")} />
+                        <Label>Requirements</Label>
+                        <Controller
+                            control={control}
+                            name="requirements"
+                            render={({ field }) => (
+                                <RichTextEditor value={field.value} onChange={field.onChange} placeholder="What must the work include?" minHeight="6rem" />
+                            )}
+                        />
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="acceptanceCriteria">Acceptance criteria</Label>
-                        <Textarea id="acceptanceCriteria" rows={2} {...register("acceptanceCriteria")} />
+                        <Label>Acceptance criteria</Label>
+                        <Controller
+                            control={control}
+                            name="acceptanceCriteria"
+                            render={({ field }) => (
+                                <RichTextEditor value={field.value} onChange={field.onChange} placeholder="How will you know it's done?" minHeight="6rem" />
+                            )}
+                        />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -159,16 +163,11 @@ export function AssignmentFormDialog({ open, onOpenChange, assignment, allTasks,
                                             return (
                                                 <label
                                                     key={t.id}
-                                                    className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors duration-fast ${checked ? "bg-primary/10" : "hover:bg-muted"
-                                                        }`}
+                                                    className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors duration-fast ${checked ? "bg-primary/10" : "hover:bg-muted"}`}
                                                 >
                                                     <Checkbox
                                                         checked={checked}
-                                                        onCheckedChange={(c) => {
-                                                            field.onChange(
-                                                                c ? [...field.value, t.id] : field.value.filter((id) => id !== t.id)
-                                                            );
-                                                        }}
+                                                        onCheckedChange={(c) => field.onChange(c ? [...field.value, t.id] : field.value.filter((id) => id !== t.id))}
                                                     />
                                                     {t.title}
                                                 </label>
@@ -181,12 +180,8 @@ export function AssignmentFormDialog({ open, onOpenChange, assignment, allTasks,
                     )}
 
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                            Cancel
-                        </Button>
-                        <Button type="submit" disabled={isPending}>
-                            {isPending ? "Saving…" : "Save"}
-                        </Button>
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+                        <Button type="submit" disabled={isPending}>{isPending ? "Saving…" : "Save"}</Button>
                     </DialogFooter>
                 </form>
             </ResponsiveDialog>

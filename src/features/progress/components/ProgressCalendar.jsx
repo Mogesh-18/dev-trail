@@ -14,16 +14,18 @@ function isSameDay(a, b) {
 }
 
 /**
- * Month calendar grid. Days with activity get a small dot cluster
- * (up to 3 dots, color-coded by activity type) instead of a plain
- * number, so patterns are visible before you even click a date.
+ * Month calendar grid — cells shrunk again (h-7/h-8) and the whole
+ * component capped at a fixed narrow width, since it now sits as one
+ * column next to a quick-view panel rather than needing to fill the
+ * page on its own.
  *
  * @param {Object} props
- * @param {Record<string, Array<{type: string}>>} props.entriesByDate - Keyed by "YYYY-MM-DD".
+ * @param {Record<string, Array<{type: string}>>} props.entriesByDate
+ * @param {string|null} props.selectedDate
  * @param {(dateKey: string) => void} props.onSelectDate
  * @returns {JSX.Element}
  */
-export function ProgressCalendar({ entriesByDate, onSelectDate }) {
+export function ProgressCalendar({ entriesByDate, selectedDate, onSelectDate }) {
     const [viewDate, setViewDate] = useState(() => {
         const d = new Date();
         d.setDate(1);
@@ -56,32 +58,33 @@ export function ProgressCalendar({ entriesByDate, onSelectDate }) {
     const monthLabel = viewDate.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 
     return (
-        <div className="rounded-lg border border-border/60 bg-card p-4 shadow-[var(--shadow-sm)]">
-            <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-mono text-sm font-semibold tracking-tight">{monthLabel}</h2>
-                <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => goToMonth(-1)} aria-label="Previous month">
-                        <ChevronLeft className="h-4 w-4" />
+        <div className="w-full max-w-[280px] rounded-lg border border-border/60 bg-card p-3 shadow-[var(--shadow-sm)]">
+            <div className="mb-2 flex items-center justify-between">
+                <h2 className="font-mono text-xs font-semibold tracking-tight">{monthLabel}</h2>
+                <div className="flex gap-0.5">
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => goToMonth(-1)} aria-label="Previous month">
+                        <ChevronLeft className="h-3 w-3" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => goToMonth(1)} aria-label="Next month">
-                        <ChevronRight className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => goToMonth(1)} aria-label="Next month">
+                        <ChevronRight className="h-3 w-3" />
                     </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-muted-foreground">
+            <div className="grid grid-cols-7 gap-0.5 text-center text-[9px] font-medium text-muted-foreground">
                 {WEEKDAY_LABELS.map((label, i) => (
-                    <div key={i} className="py-1">{label}</div>
+                    <div key={i} className="py-0.5">{label}</div>
                 ))}
             </div>
 
-            <div className="mt-1 grid grid-cols-7 gap-1">
+            <div className="mt-0.5 grid grid-cols-7 gap-0.5">
                 {weeks.flat().map((date, i) => {
-                    if (!date) return <div key={i} className="aspect-square" />;
+                    if (!date) return <div key={i} className="h-7" />;
 
                     const key = toDateKey(date);
                     const entries = entriesByDate[key] ?? [];
                     const isToday = isSameDay(date, today);
+                    const isSelected = key === selectedDate;
 
                     return (
                         <button
@@ -89,9 +92,10 @@ export function ProgressCalendar({ entriesByDate, onSelectDate }) {
                             type="button"
                             onClick={() => onSelectDate(key)}
                             className={cn(
-                                "flex aspect-square flex-col items-center justify-center gap-1 rounded-lg text-sm transition-all duration-fast ease-spring hover:bg-muted",
-                                isToday && "ring-2 ring-primary/50",
-                                entries.length > 0 && "bg-primary/5 font-medium hover:bg-primary/10"
+                                "flex h-7 flex-col items-center justify-center gap-0.5 rounded-md text-[11px] transition-all duration-fast ease-spring hover:bg-muted",
+                                isToday && !isSelected && "ring-1 ring-primary/50",
+                                entries.length > 0 && !isSelected && "bg-primary/5 font-medium hover:bg-primary/10",
+                                isSelected && "bg-primary font-medium text-primary-foreground shadow-[var(--shadow-glow-primary)] hover:bg-primary"
                             )}
                         >
                             <span>{date.getDate()}</span>
@@ -101,8 +105,8 @@ export function ProgressCalendar({ entriesByDate, onSelectDate }) {
                                         <span
                                             key={idx}
                                             className={cn(
-                                                "h-1.5 w-1.5 rounded-full",
-                                                e.type?.includes("COMPLETED") ? "bg-status-completed" : "bg-status-progress"
+                                                "h-1 w-1 rounded-full",
+                                                isSelected ? "bg-primary-foreground" : e.type?.includes("COMPLETED") ? "bg-status-completed" : "bg-status-progress"
                                             )}
                                         />
                                     ))}

@@ -3,7 +3,7 @@ import { useTasks } from "@/features/tasks/hooks/useTasks";
 import { useAssignments } from "@/features/assignments/hooks/useAssignments";
 import { useActivity } from "@/features/progress/hooks/useProgress";
 import { ProgressCalendar } from "@/features/progress/components/ProgressCalendar";
-import { DayProgressDialog } from "@/features/progress/components/DayProgressDialog";
+import { DayQuickViewPanel } from "@/features/progress/components/DayQuickViewPanel";
 
 function toDateKey(isoString) {
     const d = new Date(isoString);
@@ -11,12 +11,9 @@ function toDateKey(isoString) {
 }
 
 /**
- * Calendar view of progress: pick a date, see everything that
- * happened that day. Built on useActivity(1000) — the largest window
- * the one activity hook I've seen supports — rather than a true
- * date-range query, so extremely old history beyond that count won't
- * show up. Ask for activity.provider.js and I'll swap this for an
- * exact listByRange query.
+ * Calendar + quick-view side by side (stacked on mobile) — no modal
+ * involved anymore. Calendar stays a fixed narrow column; the panel
+ * takes the remaining width and updates in place as dates are picked.
  *
  * @returns {JSX.Element}
  */
@@ -40,7 +37,7 @@ export default function AdminCalendarPage() {
     }, [activity]);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <div className="duration-slow animate-in fade-in slide-in-from-bottom-1">
                 <h1 className="text-2xl font-semibold tracking-tight">Calendar</h1>
                 <p className="text-muted-foreground">Pick a date to see what happened that day.</p>
@@ -49,17 +46,20 @@ export default function AdminCalendarPage() {
             {isLoading ? (
                 <p className="text-sm text-muted-foreground">Loading…</p>
             ) : (
-                <ProgressCalendar entriesByDate={entriesByDate} onSelectDate={setSelectedDate} />
+                <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[280px_1fr]">
+                    <ProgressCalendar
+                        entriesByDate={entriesByDate}
+                        selectedDate={selectedDate}
+                        onSelectDate={setSelectedDate}
+                    />
+                    <DayQuickViewPanel
+                        dateKey={selectedDate}
+                        entries={selectedDate ? entriesByDate[selectedDate] ?? [] : []}
+                        tasksById={tasksById}
+                        assignmentsById={assignmentsById}
+                    />
+                </div>
             )}
-
-            <DayProgressDialog
-                open={!!selectedDate}
-                onOpenChange={(open) => !open && setSelectedDate(null)}
-                dateKey={selectedDate}
-                entries={selectedDate ? entriesByDate[selectedDate] ?? [] : []}
-                tasksById={tasksById}
-                assignmentsById={assignmentsById}
-            />
         </div>
     );
 }

@@ -158,3 +158,57 @@ html {
 ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.4);
 }
+
+.rich-text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.rich-text p {
+    margin: 0 0 0.5em;
+}
+
+.rich-text p:last-child {
+    margin-bottom: 0;
+}
+
+.rich-text h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0.75em 0 0.25em;
+}
+
+.rich-text h3:first-child {
+    margin-top: 0;
+}
+
+.rich-text ul,
+.rich-text ol {
+    margin: 0.4em 0;
+    padding-left: 1.4em;
+}
+
+.rich-text li {
+    margin: 0.15em 0;
+}
+
+.rich-text a {
+    color: hsl(var(--primary));
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.rich-text blockquote {
+    border-left: 2px solid hsl(var(--border));
+    padding-left: 0.75em;
+    margin: 0.5em 0;
+    color: hsl(var(--muted-foreground));
+}
+
+.rich-text code {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    background: hsl(var(--muted));
+    padding: 0.1em 0.35em;
+    border-radius: 0.25em;
+    font-size: 0.85em;
+}
